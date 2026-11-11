@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Vortex for SteamOS
+GenericName=Mod Manager
+Comment=Install and manage game mods from Nexus Mods
+Exec="@APP@/vortex-steamos" %u
+Icon=vortex-steamos
+Terminal=false
+Categories=Game;Utility;
+Keywords=mods;nexus;skyrim;fallout;modding;
+MimeType=x-scheme-handler/nxm;
+StartupNotify=true

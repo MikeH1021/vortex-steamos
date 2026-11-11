@@ -1,0 +1,38 @@
+#!/bin/sh
+# Starts Vortex for SteamOS, or hands an nxm:// link to the window that is
+# already open. The desktop entry runs this when a browser opens a
+# "Mod Manager Download" link.
+set -eu
+umask 077
+
+here=$(dirname "$(readlink -f "$0")")
+app="$here/vortex-steamos.x86_64"
+state="${XDG_STATE_HOME:-$HOME/.local/state}/vortex-steamos"
+mkdir -p "$state/links"
+
+# Links wait in a folder. The app reads them from there, whether it is
+# already running or about to start.
+queued=0
+for arg in "$@"; do
+    case "$arg" in
+        nxm://* | NXM://*)
+            printf '%s' "$arg" >"$state/links/$(date +%s)-$$-$queued.nxm"
+            queued=$((queued + 1))
+            ;;
+    esac
+done
+
+if [ "$queued" -gt 0 ] && [ -r "$state/ui.pid" ]; then
+    pid=$(cat "$state/ui.pid" 2>/dev/null || true)
+    case "$pid" in
+        '' | *[!0-9]*) ;;
+        *)
+            # A stale pid file can name some other program by now.
+            if [ "$(readlink -f "/proc/$pid/exe" 2>/dev/null || true)" = "$app" ]; then
+                exit 0
+            fi
+            ;;
+    esac
+fi
+
+exec "$app"

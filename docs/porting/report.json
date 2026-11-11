@@ -1,0 +1,283 @@
+{
+ "skipped": [
+  {
+   "extension": "game-daggerfallunity",
+   "reason": "No Steam app id in the extension (the game is found through a log file in AppData/LocalLow, which is not an available location)."
+  },
+  {
+   "extension": "game-masterchiefcollection",
+   "reason": "Plug-and-play mods are loaded through AppData/LocalLow/MCC/Config/ModManifest.txt (LocalLow and file writing are unavailable), modpack_config.cfg mods need the file's contents read, and the remaining installer replaces the game's own map files, which the engine never overwrites."
+  },
+  {
+   "extension": "game-nehrim",
+   "reason": "Bethesda-engine plugin game; upstream finds it through the Nehrim Steam id but manages Oblivion's install folder, and it could not be confirmed from the source that plugins can be enabled in the game's own launcher."
+  },
+  {
+   "extension": "game-neverwinter-nights (nwn)",
+   "reason": "The original Neverwinter Nights has no Steam id upstream (found through the registry only); only the Enhanced Edition was ported."
+  },
+  {
+   "extension": "game-neverwinter-nights2",
+   "reason": "No Steam id upstream (found through the registry only)."
+  },
+  {
+   "extension": "game-sims4",
+   "reason": "Upstream has no Steam app id (registry discovery only), and mods only load after the manager rewrites Resource.cfg and Options.ini in a Documents folder whose name depends on the game's language; none of that is available."
+  },
+  {
+   "extension": "game-untitledgoose",
+   "reason": "The source only knows the Epic store id (\"Flour\") and gives no Steam app id; it also depends on Vortex downloading and configuring BepInEx. Facts read from source: id untitledgoosegame, Untitled.exe, mod folder BepInEx/plugins."
+  },
+  {
+   "extension": "game-worldoftanks",
+   "reason": "No Steam app id in the source (found only through the Wargaming launcher registry key), and the mod folder is res_mods/<version> with the version read from version.xml at run time."
+  }
+ ],
+ "report": [
+  {
+   "id": "7daystodie",
+   "confidence": "medium",
+   "lost": "Load-order folder prefixes (AAA-, AAB-), the user-data-folder mod location and its launcher setting, and folder naming from ModInfo.xml; mod folders keep the archive's folder name and go to <game>/Mods."
+  },
+  {
+   "id": "ahatintime",
+   "confidence": "high",
+   "lost": "Upstream installs only the first modinfo.ini folder; this port installs every such folder in the archive."
+  },
+  {
+   "id": "baldursgate3",
+   "confidence": "medium",
+   "lost": "modsettings.lsx load order writing/import/export, LSLib/divine tool download and pak inspection, the replacer dialog, and exact matching (SE config folder only at archive top, 'bin/' as substring); LSLib archives are not special-cased. Notes about Proton and the DWrite launch option are my additions, not from upstream."
+  },
+  {
+   "id": "bladeandsorcery",
+   "confidence": "medium",
+   "lost": "Mod folder is named after the archive folder instead of the manifest's Name; loadorder.json writing, game-version checks, and the refusal of old mod.json (MulleDK19) mods are not ported."
+  },
+  {
+   "id": "bloodstainedritualofthenight",
+   "confidence": "medium",
+   "lost": "Load-order prefixes on the per-mod folder names (AAA-, AAB-) and the import of unmanaged pak files; several pak folders in one archive are merged instead of only the first being used."
+  },
+  {
+   "id": "codevein",
+   "confidence": "medium",
+   "lost": "Load-order prefixes on the per-mod folder names (AAA-, AAB-) and the import of unmanaged pak files; several pak folders in one archive are merged instead of only the first being used. Mod path capitalised as Content/Paks (upstream writes content/paks, which only works on Windows)."
+  },
+  {
+   "id": "conanexiles",
+   "confidence": "low",
+   "lost": "Upstream never deploys files; it writes modlist.txt with absolute pak paths in load order. This port deploys paks into ConanSandbox/Mods and the player must edit modlist.txt by hand (relative file names in modlist.txt are my understanding of the game, not from upstream)."
+  },
+  {
+   "id": "darkestdungeon",
+   "confidence": "medium",
+   "lost": "Generating project.xml for mods without one (and the hero-mod folder guessing that goes with it), and rewriting ModDataPath in existing project.xml files. Executable set to the Steam path (_windows) instead of the GOG fallback in the facts."
+  },
+  {
+   "id": "darksouls2",
+   "confidence": "medium",
+   "lost": "'Whole payload is X' tests are approximated with exclusion lists (replacement and texture rules); png-only texture archives fall through to as-is; GeDoSaTo routing and the Seamless Co-op tool entry are dropped; the engine will not overwrite the shipped enc_regulation.bnd.dcx. The dinput8.dll rule comes from the shared modtype-dinput extension."
+  },
+  {
+   "id": "dawnofman",
+   "confidence": "medium",
+   "lost": "Upstream names the mod folder after the mod (letters only); this port keeps the archive's folder name. Unity Mod Manager detection, download prompt and tool entry are dropped."
+  },
+  {
+   "id": "dragonage",
+   "confidence": "medium",
+   "lost": "All .dazip add-in support (nested archive unpacking via modtype-dazip, install to Documents/BioWare/Dragon Age, AddIns.xml merging); only override-folder mods work."
+  },
+  {
+   "id": "dragonsdogma",
+   "confidence": "low",
+   "lost": "Merging of game_main.arc/title.arc across mods (mtframework-arc-support) and the 'archive does not fit the expected pattern' warning; most mods replace shipped .arc files, which the engine will not overwrite."
+  },
+  {
+   "id": "elex",
+   "confidence": "high",
+   "lost": "Upstream uses only the folder of the first .pak found; the port installs every folder that holds a .pak, flattened the same way."
+  },
+  {
+   "id": "factorio",
+   "confidence": "low",
+   "lost": "Only the Windows mod folder (AppData/Roaming/Factorio/mods) is ported; upstream's Linux path ~/.factorio/mods and native program bin/x64/factorio cannot be expressed, so native_executable is left out on purpose and a native install will not be usable."
+  },
+  {
+   "id": "galacticcivilizations3",
+   "confidence": "medium",
+   "lost": "Upstream picks GC3Crusade or GalCiv3 depending on which folder exists (port always uses GC3Crusade); an archive with .faction files installs only those, flattened into Factions, while upstream also puts the other files under Mods and keeps the faction files' sub-folders. Steam id 976210 is taken from upstream unchecked."
+  },
+  {
+   "id": "greedfall",
+   "confidence": "low",
+   "lost": "Upstream sets the modified time of every deployed file to now after each deploy because the game otherwise ignores them; the engine cannot. Files beside a datalocal folder are dropped (upstream keeps them at their archive path)."
+  },
+  {
+   "id": "kenshi",
+   "confidence": "medium",
+   "lost": "Upstream names the mod folder after the .mod file; the port uses the archive's folder name (or the mod's display name when the .mod file is at the top), which is wrong whenever those differ."
+  },
+  {
+   "id": "kingdomcomedeliverance",
+   "confidence": "medium",
+   "lost": "mod_order.txt is not written (no load order); upstream names each mod folder after the mod id with spaces, dashes and dots removed, the port uses the engine's own per-mod folder name. As upstream, archives with a wrapper folder are not unwrapped."
+  },
+  {
+   "id": "monsterhunterworld",
+   "confidence": "medium",
+   "lost": "No warning when Stracker's Loader or ReShade is missing; an archive with both a nativePC folder and a loose .ini installs the nativePC part (upstream installs only the .ini); Stracker's Loader is recognised by loader.dll anywhere rather than both loader files at the top."
+  },
+  {
+   "id": "morrowind",
+   "confidence": "medium",
+   "lost": "Plugin enabling and ordering (Morrowind.ini Game Files list and plugin file dates) is not done; the player ticks plugins in the game's launcher."
+  },
+  {
+   "id": "mountandblade",
+   "confidence": "medium",
+   "lost": "Module folder is named after the archive's folder (upstream: the mod's name); loose .txt overrides are not installed; an archive mixing .dds/.brf/.sco is copied under the native module with its own folders instead of being sorted by file type."
+  },
+  {
+   "id": "mbwarband",
+   "confidence": "medium",
+   "lost": "Module folder is named after the archive's folder (upstream: the mod's name); loose .txt overrides are not installed; an archive mixing .dds/.brf/.sco is copied under the native module with its own folders instead of being sorted by file type."
+  },
+  {
+   "id": "mbwithfireandsword",
+   "confidence": "medium",
+   "lost": "Module folder is named after the archive's folder (upstream: the mod's name); loose .txt overrides are not installed; an archive mixing .dds/.brf/.sco is copied under the native module with its own folders instead of being sorted by file type."
+  },
+  {
+   "id": "nwnee",
+   "confidence": "low",
+   "lost": "Unsorted archives holding more than one kind of file (e.g. .hak plus .tlk) are unpacked as they are instead of being sorted by file type; no warning about several 'Neverwinter Nights' document folders; only the Windows build under Proton is covered (native Linux build keeps its user folder elsewhere, native_executable left out on purpose)."
+  },
+  {
+   "id": "nomanssky",
+   "confidence": "high",
+   "lost": "Setup rename of PCBANKS/DISABLEMODS.TXT to ENABLEMODS.TXT (left to the player via notes); Xbox store support."
+  },
+  {
+   "id": "pillarsofeternity2",
+   "confidence": "medium",
+   "lost": "Load order page and creation of modconfig.json (lives in AppData/LocalLow, not reachable); Game Pass variant paths; upstream name contains a tab character, replaced by a space; native Linux program name not set."
+  },
+  {
+   "id": "prisonarchitect",
+   "confidence": "medium",
+   "lost": "Native Linux build (upstream uses ~/.Prison Architect/mods, which has no base here) so no native_executable; registry discovery."
+  },
+  {
+   "id": "rimworld",
+   "confidence": "medium",
+   "lost": "Upstream names the mod folder after packageId read from About.xml and drops extensionless/.git files; port keeps the archive's folder name (or the mod name) and also splits archives holding several mods, which upstream leaves unpacked as-is."
+  },
+  {
+   "id": "sekiro",
+   "confidence": "medium",
+   "lost": "Mod Engine prompt (now a note); upstream decides loose-vs-structured from the first .partsbnd.dcx only and drops non-dcx/extensionless files in some shapes, port uses 'any parts folder => as-is, else loose dcx => parts/'."
+  },
+  {
+   "id": "spyroreignitedtrilogy",
+   "confidence": "medium",
+   "lost": "Load order: upstream prefixes each mod's folder (AAA-, AAB-...) to control which pak wins; here folders carry the mod's name, so order is whatever the names give. Import of unmanaged paks. Upstream uses only the first .pak's folder; port takes every folder holding a .pak."
+  },
+  {
+   "id": "survivingmars",
+   "confidence": "medium",
+   "lost": "GOG/Epic executables; native Linux build (different mod folder). Upstream keeps the full folder path of modcontent.hpk and drops everything outside it; port keeps only the last folder name, and when the hpk sits in a Pack folder installs the whole archive unchanged (superset of upstream, keeps metadata.lua)."
+  },
+  {
+   "id": "kotor",
+   "confidence": "medium",
+   "lost": "Upstream REFUSES archives containing tslpatcher.exe or a tslpatchdata folder; the engine cannot refuse, so the port installs only the .exe into override (harmless, nothing else placed) and says so in notes - replace with a real reject if the engine gains one. GOG discovery; extensionless files are no longer dropped; native Linux build of KOTOR II not declared."
+  },
+  {
+   "id": "kotor2",
+   "confidence": "medium",
+   "lost": "Upstream REFUSES archives containing tslpatcher.exe or a tslpatchdata folder; the engine cannot refuse, so the port installs only the .exe into override (harmless, nothing else placed) and says so in notes - replace with a real reject if the engine gains one. GOG discovery; extensionless files are no longer dropped; native Linux build of KOTOR II not declared."
+  },
+  {
+   "id": "teamfortress2",
+   "confidence": "high",
+   "lost": "Hammer tool entry; upstream uses only the first .vpk's folder, port takes every folder holding a .vpk."
+  },
+  {
+   "id": "torchlight2",
+   "confidence": "medium",
+   "lost": "Upstream puts each .mod in a folder named after the .mod file (mergeMods true); the engine cannot name folders after files, so merge_mods is false and the folder carries the mod's name instead. Folder casing corrected to the game's real 'Runic Games/Torchlight 2' (upstream writes it lowercase, which only works on Windows) - please verify. native_executable from facts dropped because the native build uses a different mod folder."
+  },
+  {
+   "id": "totalwarthreekingdoms",
+   "confidence": "medium",
+   "lost": "Launcher.exe preference, Epic/GOG ids, Assembly Kit tools; native Linux (Feral) build not declared. Upstream uses only the first .pack's folder."
+  },
+  {
+   "id": "vampirebloodlines",
+   "confidence": "medium",
+   "lost": "Upstream sends every mod to Unofficial_Patch instead of Vampire when that folder in the game is non-empty; the port always uses Vampire."
+  },
+  {
+   "id": "warthunder",
+   "confidence": "high",
+   "lost": "Upstream rewrites the sound block of config.blk to enable sound mods; the port tells the player to do it."
+  },
+  {
+   "id": "witcher",
+   "confidence": "high",
+   "lost": "Nothing; the cook.hash mod type points at the same Data/Override folder."
+  },
+  {
+   "id": "witcher2",
+   "confidence": "high",
+   "lost": "Nothing material; native executable name 'launcher' is taken from the source's non-Windows branch."
+  },
+  {
+   "id": "wolcenlordsofmayhem",
+   "confidence": "medium",
+   "lost": "XML/MTL merging between mods; files beside the known top folders (levels, Lib, Loot, Objects, Umbra) are dropped instead of kept."
+  },
+  {
+   "id": "x4foundations",
+   "confidence": "high",
+   "lost": "Reading content.xml for the folder name of archives with content.xml at the top (display name used instead), mod name/author attributes, and the never-auto-assigned Documents/Egosoft/X4 mod type."
+  },
+  {
+   "id": "xcom2",
+   "confidence": "medium",
+   "lost": "Load order page that writes ActiveMods to XComGame/Config/DefaultModOptions.ini (player must enable mods); renaming the mod folder to the .XComMod file name."
+  },
+  {
+   "id": "xcom2-wotc",
+   "confidence": "medium",
+   "lost": "Load order page that writes ActiveMods to XCom2-WarOfTheChosen/XComGame/Config/DefaultModOptions.ini (player must enable mods); renaming the mod folder to the .XComMod file name."
+  },
+  {
+   "id": "xrebirth",
+   "confidence": "medium",
+   "lost": "Folder is named after the archive folder, not the id inside content.xml; the savegame/shader/utility/drop-in/save-patch/documentation installers only tag a mod type that upstream never gives a folder, so those archives are unpacked as they are into extensions."
+  },
+  {
+   "id": "microsoftflightsimulator",
+   "confidence": "low",
+   "lost": "Mod folder is fixed to the Steam default (AppData/Roaming/Microsoft Flight Simulator/Packages/Community) instead of read from UserCfg.opt; no replacer installer (mapping loose files onto official content and generating layout.json), no aircraft.cfg/locPak merge, no load-order folder prefixes."
+  },
+  {
+   "id": "falloutnv",
+   "confidence": "high",
+   "lost": "4GB patch installer: archive with FNVpatch.exe, FalloutNVpatch.exe or Patcher.exe at its top level (and no FOMOD); every file is copied unchanged into the game install folder next to FalloutNV.exe (mod type dinput), flagged as the 4GB patcher."
+  },
+  {
+   "id": "fallout4vr",
+   "confidence": "high",
+   "lost": "ESL enabler installer: archive containing Daytripper4.dll anywhere; each file's first path segment is replaced by Data and the mod is deployed to the game install folder (mod type dinput), so the top folder's contents land in <game>/Data/..."
+  },
+  {
+   "id": "skyrimvr",
+   "confidence": "high",
+   "lost": "ESL enabler installer: archive containing skyrimvresl.dll anywhere; each file's first path segment is replaced by Data and the mod is deployed to the game install folder (mod type dinput), so the top folder's contents land in <game>/Data/..."
+  }
+ ]
+}

@@ -1,0 +1,258 @@
+[
+  {
+    "id": "battletech",
+    "name": "BattleTech",
+    "steam": [
+      637090
+    ],
+    "executable": "BattleTech.exe",
+    "mod_path": {
+      "base": "documents",
+      "path": "My Games/BattleTech/mods"
+    },
+    "nexus_domain": "battletech",
+    "merge_mods": true
+  },
+  {
+    "id": "breakingwheel",
+    "name": "Breaking Wheel",
+    "steam": [
+      545890
+    ],
+    "executable": "Ellie_Ball_Project.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "ModdingTools"
+    },
+    "nexus_domain": "breakingwheel",
+    "merge_mods": true
+  },
+  {
+    "id": "darksouls",
+    "name": "Dark Souls",
+    "steam": [
+      211420
+    ],
+    "executable": "DATA/DARKSOULS.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "DATA/dsfix/tex_override"
+    },
+    "nexus_domain": "darksouls",
+    "merge_mods": true
+  },
+  {
+    "id": "divinityoriginalsin2definitiveedition",
+    "name": "Divinity: Original Sin 2 Definitive Edition",
+    "steam": [
+      435150
+    ],
+    "executable": "DefEd/bin/SupportTool.exe",
+    "mod_path": {
+      "base": "documents",
+      "path": "Larian Studios/Divinity Original Sin 2 Definitive Edition/Mods"
+    },
+    "nexus_domain": "divinityoriginalsin2definitiveedition",
+    "merge_mods": true
+  },
+  {
+    "id": "divinityoriginalsin2",
+    "name": "Divinity: Original Sin 2 Original Edition",
+    "steam": [
+      435150
+    ],
+    "executable": "bin/SupportTool.exe",
+    "mod_path": {
+      "base": "documents",
+      "path": "Larian Studios/Divinity Original Sin 2/Mods"
+    },
+    "nexus_domain": "divinityoriginalsin2",
+    "merge_mods": true
+  },
+  {
+    "id": "dragonage2",
+    "name": "Dragon Age 2",
+    "steam": [
+      15543,
+      1238040
+    ],
+    "executable": "bin_ship/dragonage2.exe",
+    "mod_path": {
+      "base": "documents",
+      "path": "BioWare/Dragon Age 2/packages/core/override"
+    },
+    "nexus_domain": "dragonage2",
+    "merge_mods": true
+  },
+  {
+    "id": "gardenpaws",
+    "name": "Garden Paws",
+    "steam": [
+      840010
+    ],
+    "executable": "GardenPaws.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Mods"
+    },
+    "nexus_domain": "gardenpaws",
+    "merge_mods": true
+  },
+  {
+    "id": "grimdawn",
+    "name": "Grim Dawn",
+    "steam": [
+      219990
+    ],
+    "executable": "Grim Dawn.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "mods"
+    },
+    "nexus_domain": "grimdawn",
+    "merge_mods": true
+  },
+  {
+    "id": "kerbalspaceprogram",
+    "name": "Kerbal Space Program",
+    "steam": [
+      220200
+    ],
+    "executable": "KSP_x64.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "GameData"
+    },
+    "nexus_domain": "kerbalspaceprogram",
+    "merge_mods": true,
+    "native_executable": "KSP.x86_64"
+  },
+  {
+    "id": "grimrock",
+    "name": "Legend of Grimrock",
+    "steam": [
+      207170
+    ],
+    "executable": "grimrock.exe",
+    "mod_path": {
+      "base": "documents",
+      "path": "Almost Human/Legend of Grimrock/Dungeons"
+    },
+    "nexus_domain": "grimrock",
+    "merge_mods": true,
+    "native_executable": "Grimrock.bin.x86"
+  },
+  {
+    "id": "oxygennotincluded",
+    "name": "Oxygen Not Included",
+    "steam": [
+      457140
+    ],
+    "executable": "OxygenNotIncluded.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Mods"
+    },
+    "nexus_domain": "oxygennotincluded",
+    "merge_mods": true
+  },
+  {
+    "id": "pathfinderkingmaker",
+    "name": "Pathfinder: Kingmaker",
+    "steam": [
+      640820
+    ],
+    "executable": "Kingmaker.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Mods"
+    },
+    "nexus_domain": "pathfinderkingmaker",
+    "merge_mods": true
+  },
+  {
+    "id": "pathfinderwrathoftherighteous",
+    "name": "Pathfinder: Wrath of the Righteous",
+    "steam": [
+      1184370
+    ],
+    "executable": "Wrath.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Mods"
+    },
+    "nexus_domain": "pathfinderwrathoftherighteous",
+    "merge_mods": true
+  },
+  {
+    "id": "shadowrunreturns",
+    "name": "Shadowrun Returns",
+    "steam": [
+      234650
+    ],
+    "executable": "Shadowrun.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Shadowrun_Data/StreamingAssets/ContentPacks"
+    },
+    "nexus_domain": "shadowrunreturns",
+    "merge_mods": false
+  },
+  {
+    "id": "starbound",
+    "name": "Starbound",
+    "steam": [
+      211820
+    ],
+    "executable": "win64/starbound.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "mods"
+    },
+    "nexus_domain": "starbound",
+    "merge_mods": true,
+    "native_executable": "linux/run-client.sh"
+  },
+  {
+    "id": "stateofdecay",
+    "name": "State of Decay",
+    "steam": [
+      241540
+    ],
+    "executable": "StateOfDecay.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "game"
+    },
+    "nexus_domain": "stateofdecay",
+    "merge_mods": true
+  },
+  {
+    "id": "teso",
+    "name": "The Elder Scrolls Online",
+    "steam": [
+      306130
+    ],
+    "executable": "Bethesda.net_Launcher.exe",
+    "mod_path": {
+      "base": "documents",
+      "path": "Elder Scrolls Online/live/Addons"
+    },
+    "nexus_domain": "elderscrollsonline",
+    "merge_mods": true
+  },
+  {
+    "id": "thesims3",
+    "name": "The Sims 3",
+    "steam": [
+      47890
+    ],
+    "executable": "game/bin/TS3.exe",
+    "mod_path": {
+      "base": "documents",
+      "path": "Electronic Arts/The Sims 3/Mods/Packages"
+    },
+    "nexus_domain": "thesims3",
+    "merge_mods": true
+  }
+]

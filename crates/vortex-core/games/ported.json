@@ -1,0 +1,2001 @@
+[
+  {
+    "id": "7daystodie",
+    "name": "7 Days to Die",
+    "steam": [
+      251570
+    ],
+    "executable": "7DaysToDie.exe",
+    "native_executable": "7DaysToDie.x86_64",
+    "mod_path": {
+      "base": "game",
+      "path": "Mods"
+    },
+    "nexus_domain": "7daystodie",
+    "merge_mods": true,
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
+    "install": [
+      {
+        "type": "as_is",
+        "strip_wrapper": true,
+        "target": "root",
+        "when": {
+          "has_dir": [
+            "BepInEx"
+          ],
+          "has_file": [
+            "winhttp.dll"
+          ]
+        }
+      },
+      {
+        "type": "anchor",
+        "dirs": [
+          "BepInEx",
+          "Mods"
+        ],
+        "keep": true,
+        "target": "root",
+        "when": {
+          "has_dir": [
+            "BepInEx"
+          ]
+        }
+      },
+      {
+        "type": "marker",
+        "file": [
+          "ModInfo.xml"
+        ],
+        "up": 0,
+        "keep_folder": true
+      }
+    ],
+    "notes": "The game loads mods in alphabetical order of their folder names inside the Mods folder."
+  },
+  {
+    "id": "ahatintime",
+    "name": "A Hat in Time",
+    "steam": [
+      253230
+    ],
+    "executable": "Binaries/Win64/HatInTimeGame.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "HatInTimeGame/Mods"
+    },
+    "nexus_domain": "ahatintime",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "file": [
+          "modinfo.ini"
+        ],
+        "up": 0,
+        "keep_folder": true
+      }
+    ]
+  },
+  {
+    "id": "baldursgate3",
+    "name": "Baldur's Gate 3",
+    "steam": [
+      1086940
+    ],
+    "executable": "bin/bg3_dx11.exe",
+    "mod_path": {
+      "base": "appdata_local",
+      "path": "Larian Studios/Baldur's Gate 3/Mods"
+    },
+    "nexus_domain": "baldursgate3",
+    "merge_mods": true,
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      },
+      "bin": {
+        "base": "game",
+        "path": "bin"
+      },
+      "data": {
+        "base": "game",
+        "path": "Data"
+      },
+      "se_config": {
+        "base": "appdata_local",
+        "path": "Larian Studios/Baldur's Gate 3/Script Extender"
+      }
+    },
+    "install": [
+      {
+        "type": "flat",
+        "ext": [
+          ".dll"
+        ],
+        "target": "bin",
+        "when": {
+          "has_file": [
+            "DWrite.dll"
+          ]
+        }
+      },
+      {
+        "type": "anchor",
+        "dirs": [
+          "Script Extender",
+          "SE_CONFIG"
+        ],
+        "keep": false,
+        "target": "se_config"
+      },
+      {
+        "type": "anchor",
+        "dirs": [
+          "bin"
+        ],
+        "keep": true,
+        "target": "root"
+      },
+      {
+        "type": "anchor",
+        "dirs": [
+          "Data"
+        ],
+        "keep": false,
+        "target": "data",
+        "when": {
+          "has_dir": [
+            "Public",
+            "Generated"
+          ]
+        }
+      },
+      {
+        "type": "anchor",
+        "dirs": [
+          "Public",
+          "Generated",
+          "Mods",
+          "Localization"
+        ],
+        "keep": true,
+        "target": "data",
+        "when": {
+          "has_dir": [
+            "Public",
+            "Generated"
+          ]
+        }
+      },
+      {
+        "type": "anchor",
+        "dirs": [
+          "Data"
+        ],
+        "keep": false,
+        "target": "data",
+        "when": {
+          "no_ext": [
+            ".pak"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".pak"
+        ],
+        "when": {
+          "has_file": [
+            "ModFixer.pak"
+          ]
+        }
+      },
+      {
+        "type": "marker",
+        "ext": [
+          ".pak"
+        ],
+        "up": 0,
+        "keep_folder": false
+      }
+    ],
+    "notes": "After installing, switch each mod on in the game's own Mod Manager on the main menu, because this app does not write the game's mod list or load order. Mods are placed in the Windows version's folders, so the game has to be run through Proton. The Script Extender only loads when the game's Steam launch options are set to WINEDLLOVERRIDES=\"DWrite=n,b\" %command%."
+  },
+  {
+    "id": "bladeandsorcery",
+    "name": "Blade & Sorcery",
+    "steam": [
+      629730
+    ],
+    "executable": "BladeAndSorcery.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "BladeAndSorcery_Data/StreamingAssets/Mods"
+    },
+    "nexus_domain": "bladeandsorcery",
+    "merge_mods": true,
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
+    "install": [
+      {
+        "type": "anchor",
+        "dirs": [
+          "BladeAndSorcery_Data"
+        ],
+        "keep": true,
+        "target": "root",
+        "when": {
+          "has_file": [
+            "manifest.json"
+          ]
+        }
+      },
+      {
+        "type": "marker",
+        "file": [
+          "manifest.json"
+        ],
+        "up": 0,
+        "keep_folder": true
+      }
+    ]
+  },
+  {
+    "id": "bloodstainedritualofthenight",
+    "name": "Bloodstained: Ritual of the Night",
+    "steam": [
+      692850
+    ],
+    "executable": "BloodstainedROTN.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "BloodstainedRotN/Content/Paks/~mods"
+    },
+    "nexus_domain": "bloodstainedritualofthenight",
+    "merge_mods": false,
+    "install": [
+      {
+        "type": "marker",
+        "ext": [
+          ".pak"
+        ],
+        "up": 0,
+        "keep_folder": false
+      }
+    ],
+    "notes": "The game loads mods in alphabetical order of their folder names inside the ~mods folder."
+  },
+  {
+    "id": "codevein",
+    "name": "Code Vein",
+    "steam": [
+      678960
+    ],
+    "executable": "CodeVein/Binaries/Win64/CodeVein-Win64-Shipping.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "CodeVein/Content/Paks/~mods"
+    },
+    "nexus_domain": "codevein",
+    "merge_mods": false,
+    "install": [
+      {
+        "type": "marker",
+        "ext": [
+          ".pak"
+        ],
+        "up": 0,
+        "keep_folder": false
+      }
+    ],
+    "notes": "The game loads mods in alphabetical order of their folder names inside the ~mods folder."
+  },
+  {
+    "id": "conanexiles",
+    "name": "Conan Exiles",
+    "steam": [
+      440900
+    ],
+    "executable": "ConanSandbox/Binaries/Win64/ConanSandbox.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "ConanSandbox/Mods"
+    },
+    "nexus_domain": "conanexiles",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "ext": [
+          ".pak"
+        ],
+        "up": 0,
+        "keep_folder": false
+      }
+    ],
+    "notes": "The game only loads mods that are listed in the file ConanSandbox/Mods/modlist.txt, and this app does not write that file. After installing, add each mod's .pak file name to modlist.txt yourself, one per line, in the order you want them loaded."
+  },
+  {
+    "id": "darksouls2",
+    "name": "Dark Souls II",
+    "steam": [
+      236430,
+      335300
+    ],
+    "executable": "Game/DarksoulsII.exe",
+    "mod_path": {
+      "base": "game",
+      "path": ""
+    },
+    "nexus_domain": "darksouls2",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "file": [
+          "dinput8.dll"
+        ],
+        "up": 0,
+        "keep_folder": false,
+        "to": "Game"
+      },
+      {
+        "type": "marker",
+        "file": [
+          "dxgi.dll",
+          "d3d11.dll",
+          "d3d9.dll",
+          "d3d12.dll",
+          "winmm.dll",
+          "version.dll",
+          "ds2sc_launcher.exe"
+        ],
+        "up": 0,
+        "keep_folder": false,
+        "to": "Game"
+      },
+      {
+        "type": "flat",
+        "ext": [
+          "enc_regulation.bnd.dcx"
+        ],
+        "to": "Game",
+        "when": {
+          "no_ext": [
+            ".dll",
+            ".exe",
+            ".dds",
+            ".png",
+            ".bnd",
+            ".ini"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".dds",
+          ".png"
+        ],
+        "to": "Game/tex_override",
+        "when": {
+          "has_ext": [
+            ".dds"
+          ],
+          "no_ext": [
+            ".dll",
+            ".exe",
+            ".dcx",
+            ".bnd",
+            ".ini"
+          ]
+        }
+      }
+    ],
+    "notes": "Texture mods are placed in Game/tex_override and only show up in the game when a texture loader such as DS2 Lighting Engine is installed."
+  },
+  {
+    "id": "darkestdungeon",
+    "name": "Darkest Dungeon",
+    "steam": [
+      262060
+    ],
+    "executable": "_windows/win64/Darkest.exe",
+    "native_executable": "_linux/darkest.bin.x86_64",
+    "mod_path": {
+      "base": "game",
+      "path": "mods"
+    },
+    "nexus_domain": "darkestdungeon",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "file": [
+          "project.xml"
+        ],
+        "up": 0,
+        "keep_folder": true
+      }
+    ],
+    "notes": "The game only recognises mods that come with a project.xml file. Mods without one are unpacked into the mods folder unchanged and will not show up in the game until you add a project.xml to them yourself."
+  },
+  {
+    "id": "dawnofman",
+    "name": "Dawn of Man",
+    "steam": [
+      858810
+    ],
+    "executable": "DawnOfMan.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Mods"
+    },
+    "nexus_domain": "dawnofman",
+    "merge_mods": true,
+    "targets": {
+      "scenarios": {
+        "base": "documents",
+        "path": "DawnOfMan/Scenarios"
+      }
+    },
+    "install": [
+      {
+        "type": "marker",
+        "ext": [
+          ".scn.xml"
+        ],
+        "up": 0,
+        "keep_folder": true,
+        "target": "scenarios"
+      },
+      {
+        "type": "marker",
+        "file": [
+          "Info.json"
+        ],
+        "up": 0,
+        "keep_folder": true
+      }
+    ],
+    "notes": "Most mods for this game need Unity Mod Manager to be installed into the game before they do anything. Scenario mods work without it."
+  },
+  {
+    "id": "dragonage",
+    "name": "Dragon Age: Origins",
+    "steam": [
+      17450,
+      47810
+    ],
+    "executable": "bin_ship/daorigins.exe",
+    "mod_path": {
+      "base": "documents",
+      "path": "BioWare/Dragon Age/packages/core/override"
+    },
+    "nexus_domain": "dragonage",
+    "merge_mods": true,
+    "notes": "Mods are unpacked into the game's override folder. Mods that come as a .dazip file are not supported here and must be installed with the game's own DAUpdater tool."
+  },
+  {
+    "id": "dragonsdogma",
+    "name": "Dragon's Dogma",
+    "steam": [
+      367500
+    ],
+    "executable": "DDDA.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "nativePC"
+    },
+    "nexus_domain": "dragonsdogma",
+    "merge_mods": true,
+    "notes": "Mods are unpacked into the nativePC folder exactly as they are packed, so the archive should start with folders such as rom or movie. Two mods that change the same .arc file are not combined, and the one lower in the list wins."
+  },
+  {
+    "id": "elex",
+    "name": "Elex",
+    "steam": [
+      411300
+    ],
+    "executable": "system/ELEX.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "data/packed"
+    },
+    "nexus_domain": "elex",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "ext": [
+          ".pak"
+        ],
+        "up": 0,
+        "keep_folder": false
+      }
+    ]
+  },
+  {
+    "id": "factorio",
+    "name": "Factorio",
+    "steam": [
+      427520
+    ],
+    "executable": "bin/x64/Factorio.exe",
+    "mod_path": {
+      "base": "appdata_roaming",
+      "path": "Factorio/mods"
+    },
+    "nexus_domain": "factorio",
+    "merge_mods": true,
+    "notes": "Mods are only seen when Factorio runs through Proton, so force the Windows version in the game's Steam compatibility settings. The Linux version of the game keeps its mods in a different folder that this manager cannot reach."
+  },
+  {
+    "id": "galacticcivilizations3",
+    "name": "Galactic Civilizations III",
+    "steam": [
+      976210
+    ],
+    "executable": "GalCiv3.exe",
+    "mod_path": {
+      "base": "documents",
+      "path": "My Games/GC3Crusade"
+    },
+    "nexus_domain": "galacticcivilizations3",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "flat",
+        "ext": [
+          ".faction"
+        ],
+        "to": "Factions"
+      },
+      {
+        "type": "as_is",
+        "strip_wrapper": false,
+        "to": "Mods"
+      }
+    ],
+    "notes": "Remember to enable mods in the game's options. Mods are placed in the Crusade folder in Documents, My Games, GC3Crusade."
+  },
+  {
+    "id": "greedfall",
+    "name": "GreedFall",
+    "steam": [
+      606880
+    ],
+    "executable": "GreedFall.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "datalocal"
+    },
+    "nexus_domain": "greedfall",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "anchor",
+        "dirs": [
+          "datalocal"
+        ],
+        "keep": false
+      }
+    ],
+    "notes": "The game only loads mod files whose modified date is recent, and this manager does not update that date. If a mod does not show up in the game, its files in the datalocal folder need their modified date set to today."
+  },
+  {
+    "id": "kenshi",
+    "name": "Kenshi",
+    "steam": [
+      233860
+    ],
+    "executable": "kenshi_x64.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "mods"
+    },
+    "nexus_domain": "kenshi",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "ext": [
+          ".mod"
+        ],
+        "up": 0,
+        "keep_folder": true
+      }
+    ],
+    "notes": "A Kenshi mod only loads when its folder has the same name as the .mod file inside it. If an installed mod does not appear in the game's launcher, check that its folder in the mods folder is named that way."
+  },
+  {
+    "id": "kingdomcomedeliverance",
+    "name": "Kingdom Come: Deliverance",
+    "steam": [
+      379430
+    ],
+    "executable": "Bin/Win64/KingdomCome.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Mods"
+    },
+    "nexus_domain": "kingdomcomedeliverance",
+    "merge_mods": false,
+    "notes": "Mods load in the game's default order. To change the order, write the mod folder names, one per line, in a file called mod_order.txt inside the game's Mods folder."
+  },
+  {
+    "id": "microsoftflightsimulator",
+    "name": "Microsoft Flight Simulator",
+    "steam": [
+      1250410
+    ],
+    "executable": "FlightSimulator.exe",
+    "mod_path": {
+      "base": "appdata_roaming",
+      "path": "Microsoft Flight Simulator/Packages/Community"
+    },
+    "nexus_domain": "microsoftflightsimulator",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "file": [
+          "manifest.json"
+        ],
+        "up": 0,
+        "keep_folder": true
+      }
+    ],
+    "notes": "Mods are placed in the Community folder at the game's default packages location. If you chose a different packages folder when the game first downloaded its content, mods will not be found and must be copied there by hand. Mods that come without a manifest.json file are not arranged automatically and may not work."
+  },
+  {
+    "id": "monsterhunterworld",
+    "name": "Monster Hunter: World",
+    "steam": [
+      582010
+    ],
+    "executable": "MonsterHunterWorld.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "nativePC"
+    },
+    "nexus_domain": "monsterhunterworld",
+    "merge_mods": true,
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
+    "install": [
+      {
+        "type": "as_is",
+        "strip_wrapper": false,
+        "target": "root",
+        "when": {
+          "has_file": [
+            "loader.dll"
+          ]
+        }
+      },
+      {
+        "type": "anchor",
+        "dirs": [
+          "nativePC"
+        ],
+        "keep": false
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".ini"
+        ],
+        "target": "root"
+      }
+    ],
+    "notes": "Most mods need Stracker's Loader, which you can install here like any other mod and must keep enabled. ReShade presets are placed next to the game program and do nothing unless ReShade itself is installed."
+  },
+  {
+    "id": "morrowind",
+    "name": "Morrowind",
+    "steam": [
+      22320
+    ],
+    "executable": "morrowind.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Data Files"
+    },
+    "nexus_domain": "morrowind",
+    "merge_mods": true,
+    "notes": "This manager does not switch Morrowind plugins on. After installing a mod with an .esp or .esm file, open the Morrowind Launcher, choose Data Files and tick the new plugin there."
+  },
+  {
+    "id": "mountandblade",
+    "name": "Mount & Blade",
+    "steam": [
+      22100
+    ],
+    "executable": "mount&blade.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "modules"
+    },
+    "nexus_domain": "mountandblade",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "file": [
+          "module.ini"
+        ],
+        "up": 0,
+        "keep_folder": true
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".dds"
+        ],
+        "to": "native/textures",
+        "when": {
+          "no_ext": [
+            ".brf",
+            ".sco"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".brf"
+        ],
+        "to": "native/resource",
+        "when": {
+          "no_ext": [
+            ".dds",
+            ".sco"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".sco"
+        ],
+        "to": "native/sceneobj",
+        "when": {
+          "no_ext": [
+            ".dds",
+            ".brf"
+          ]
+        }
+      },
+      {
+        "type": "as_is",
+        "strip_wrapper": true,
+        "to": "native",
+        "when": {
+          "has_ext": [
+            ".dds",
+            ".brf",
+            ".sco"
+          ]
+        }
+      }
+    ],
+    "notes": "Whole modules are picked on the game's start screen. Mods that only replace text files of the game's own module are not supported."
+  },
+  {
+    "id": "mbwarband",
+    "name": "Mount & Blade: Warband",
+    "steam": [
+      48700
+    ],
+    "executable": "mb_warband.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "modules"
+    },
+    "nexus_domain": "mbwarband",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "file": [
+          "module.ini"
+        ],
+        "up": 0,
+        "keep_folder": true
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".dds"
+        ],
+        "to": "native/textures",
+        "when": {
+          "no_ext": [
+            ".brf",
+            ".sco"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".brf"
+        ],
+        "to": "native/resource",
+        "when": {
+          "no_ext": [
+            ".dds",
+            ".sco"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".sco"
+        ],
+        "to": "native/sceneobj",
+        "when": {
+          "no_ext": [
+            ".dds",
+            ".brf"
+          ]
+        }
+      },
+      {
+        "type": "as_is",
+        "strip_wrapper": true,
+        "to": "native",
+        "when": {
+          "has_ext": [
+            ".dds",
+            ".brf",
+            ".sco"
+          ]
+        }
+      }
+    ],
+    "notes": "Whole modules are picked on the game's start screen. Mods that only replace text files of the game's own module are not supported."
+  },
+  {
+    "id": "mbwithfireandsword",
+    "name": "Mount & Blade: With Fire and Sword",
+    "steam": [
+      48720
+    ],
+    "executable": "mb_wfas.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "modules"
+    },
+    "nexus_domain": "mbwithfireandsword",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "file": [
+          "module.ini"
+        ],
+        "up": 0,
+        "keep_folder": true
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".dds"
+        ],
+        "to": "Ogniem i Mieczem/textures",
+        "when": {
+          "no_ext": [
+            ".brf",
+            ".sco"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".brf"
+        ],
+        "to": "Ogniem i Mieczem/resource",
+        "when": {
+          "no_ext": [
+            ".dds",
+            ".sco"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".sco"
+        ],
+        "to": "Ogniem i Mieczem/sceneobj",
+        "when": {
+          "no_ext": [
+            ".dds",
+            ".brf"
+          ]
+        }
+      },
+      {
+        "type": "as_is",
+        "strip_wrapper": true,
+        "to": "Ogniem i Mieczem",
+        "when": {
+          "has_ext": [
+            ".dds",
+            ".brf",
+            ".sco"
+          ]
+        }
+      }
+    ],
+    "notes": "Whole modules are picked on the game's start screen. Mods that only replace text files of the game's own module are not supported."
+  },
+  {
+    "id": "nwnee",
+    "name": "Neverwinter Nights: Enhanced Edition",
+    "steam": [
+      704450
+    ],
+    "executable": "bin/win32/nwmain.exe",
+    "mod_path": {
+      "base": "documents",
+      "path": "Neverwinter Nights"
+    },
+    "nexus_domain": "neverwinter",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "as_is",
+        "strip_wrapper": false,
+        "when": {
+          "has_dir": [
+            "ambient",
+            "database",
+            "development",
+            "dmvault",
+            "hak",
+            "localvault",
+            "logs",
+            "modules",
+            "movies",
+            "music",
+            "nwsync",
+            "override",
+            "portraits",
+            "servervault",
+            "tempclient",
+            "tlk"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".mod"
+        ],
+        "to": "modules",
+        "when": {
+          "no_ext": [
+            ".tga",
+            ".erf",
+            ".hak",
+            ".exe",
+            ".hif",
+            ".tlk",
+            ".bmu",
+            ".wav",
+            ".cdx",
+            ".dbf",
+            ".fpt",
+            ".nbm",
+            ".bik",
+            ".2da",
+            ".uti",
+            ".txi",
+            ".mdl",
+            ".ncs",
+            ".dlg",
+            ".utp"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".tga"
+        ],
+        "to": "portraits",
+        "when": {
+          "no_ext": [
+            ".mod",
+            ".erf",
+            ".hak",
+            ".exe",
+            ".hif",
+            ".tlk",
+            ".bmu",
+            ".wav",
+            ".cdx",
+            ".dbf",
+            ".fpt",
+            ".nbm",
+            ".bik",
+            ".2da",
+            ".uti",
+            ".txi",
+            ".mdl",
+            ".ncs",
+            ".dlg",
+            ".utp"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".erf"
+        ],
+        "to": "erf",
+        "when": {
+          "no_ext": [
+            ".mod",
+            ".tga",
+            ".hak",
+            ".exe",
+            ".hif",
+            ".tlk",
+            ".bmu",
+            ".wav",
+            ".cdx",
+            ".dbf",
+            ".fpt",
+            ".nbm",
+            ".bik",
+            ".2da",
+            ".uti",
+            ".txi",
+            ".mdl",
+            ".ncs",
+            ".dlg",
+            ".utp"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".hak",
+          ".exe",
+          ".hif"
+        ],
+        "to": "hak",
+        "when": {
+          "no_ext": [
+            ".mod",
+            ".tga",
+            ".erf",
+            ".tlk",
+            ".bmu",
+            ".wav",
+            ".cdx",
+            ".dbf",
+            ".fpt",
+            ".nbm",
+            ".bik",
+            ".2da",
+            ".uti",
+            ".txi",
+            ".mdl",
+            ".ncs",
+            ".dlg",
+            ".utp"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".tlk"
+        ],
+        "to": "tlk",
+        "when": {
+          "no_ext": [
+            ".mod",
+            ".tga",
+            ".erf",
+            ".hak",
+            ".exe",
+            ".hif",
+            ".bmu",
+            ".wav",
+            ".cdx",
+            ".dbf",
+            ".fpt",
+            ".nbm",
+            ".bik",
+            ".2da",
+            ".uti",
+            ".txi",
+            ".mdl",
+            ".ncs",
+            ".dlg",
+            ".utp"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".bmu"
+        ],
+        "to": "music",
+        "when": {
+          "no_ext": [
+            ".mod",
+            ".tga",
+            ".erf",
+            ".hak",
+            ".exe",
+            ".hif",
+            ".tlk",
+            ".wav",
+            ".cdx",
+            ".dbf",
+            ".fpt",
+            ".nbm",
+            ".bik",
+            ".2da",
+            ".uti",
+            ".txi",
+            ".mdl",
+            ".ncs",
+            ".dlg",
+            ".utp"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".wav"
+        ],
+        "to": "ambient",
+        "when": {
+          "no_ext": [
+            ".mod",
+            ".tga",
+            ".erf",
+            ".hak",
+            ".exe",
+            ".hif",
+            ".tlk",
+            ".bmu",
+            ".cdx",
+            ".dbf",
+            ".fpt",
+            ".nbm",
+            ".bik",
+            ".2da",
+            ".uti",
+            ".txi",
+            ".mdl",
+            ".ncs",
+            ".dlg",
+            ".utp"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".cdx",
+          ".dbf",
+          ".fpt"
+        ],
+        "to": "database",
+        "when": {
+          "no_ext": [
+            ".mod",
+            ".tga",
+            ".erf",
+            ".hak",
+            ".exe",
+            ".hif",
+            ".tlk",
+            ".bmu",
+            ".wav",
+            ".nbm",
+            ".bik",
+            ".2da",
+            ".uti",
+            ".txi",
+            ".mdl",
+            ".ncs",
+            ".dlg",
+            ".utp"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".nbm",
+          ".bik"
+        ],
+        "to": "movies",
+        "when": {
+          "no_ext": [
+            ".mod",
+            ".tga",
+            ".erf",
+            ".hak",
+            ".exe",
+            ".hif",
+            ".tlk",
+            ".bmu",
+            ".wav",
+            ".cdx",
+            ".dbf",
+            ".fpt",
+            ".2da",
+            ".uti",
+            ".txi",
+            ".mdl",
+            ".ncs",
+            ".dlg",
+            ".utp"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".2da",
+          ".uti",
+          ".txi",
+          ".mdl",
+          ".ncs",
+          ".dlg",
+          ".utp"
+        ],
+        "to": "override",
+        "when": {
+          "no_ext": [
+            ".mod",
+            ".tga",
+            ".erf",
+            ".hak",
+            ".exe",
+            ".hif",
+            ".tlk",
+            ".bmu",
+            ".wav",
+            ".cdx",
+            ".dbf",
+            ".fpt",
+            ".nbm",
+            ".bik"
+          ]
+        }
+      }
+    ],
+    "notes": "Mods are only seen when the game runs through Proton, so force the Windows version in the game's Steam compatibility settings. A mod that mixes several kinds of files without sorting them into folders such as hak, tlk, modules or override cannot be placed automatically."
+  },
+  {
+    "id": "nomanssky",
+    "name": "No Man's Sky",
+    "steam": [
+      275850
+    ],
+    "executable": "Binaries/NMS.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "GAMEDATA/MODS"
+    },
+    "nexus_domain": "nomanssky",
+    "merge_mods": true,
+    "targets": {
+      "binaries": {
+        "base": "game",
+        "path": "Binaries"
+      },
+      "pcbanks_mods": {
+        "base": "game",
+        "path": "GAMEDATA/PCBANKS/MODS"
+      }
+    },
+    "install": [
+      {
+        "type": "as_is",
+        "target": "binaries",
+        "when": {
+          "has_ext": [
+            ".dll"
+          ]
+        }
+      },
+      {
+        "type": "as_is",
+        "target": "pcbanks_mods",
+        "when": {
+          "has_ext": [
+            ".pak"
+          ]
+        }
+      }
+    ],
+    "notes": "Before playing with mods, rename the file DISABLEMODS.TXT in the game's GAMEDATA/PCBANKS folder to ENABLEMODS.TXT if it is there."
+  },
+  {
+    "id": "palworld",
+    "name": "Palworld",
+    "steam": [
+      1623730
+    ],
+    "executable": "Palworld.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Pal/Content/Paks/~mods"
+    },
+    "nexus_domain": "palworld",
+    "merge_mods": true,
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      },
+      "paks": {
+        "base": "game",
+        "path": "Pal/Content/Paks"
+      },
+      "win64": {
+        "base": "game",
+        "path": "Pal/Binaries/Win64"
+      }
+    },
+    "install": [
+      {
+        "type": "anchor",
+        "dirs": [
+          "Pal"
+        ],
+        "keep": true,
+        "target": "root"
+      },
+      {
+        "type": "as_is",
+        "strip_wrapper": true,
+        "target": "win64",
+        "when": {
+          "has_file": [
+            "dwmapi.dll",
+            "xinput1_3.dll",
+            "UE4SS.dll"
+          ]
+        }
+      },
+      {
+        "type": "anchor",
+        "dirs": [
+          "LogicMods"
+        ],
+        "keep": true,
+        "target": "paks"
+      },
+      {
+        "type": "marker",
+        "file": [
+          "main.lua"
+        ],
+        "up": 1,
+        "to": "Mods",
+        "target": "win64"
+      },
+      {
+        "type": "anchor",
+        "dirs": [
+          "~mods"
+        ],
+        "keep": false
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".pak",
+          ".utoc",
+          ".ucas"
+        ]
+      }
+    ],
+    "extender": {
+      "name": "UE4SS",
+      "loader": "Pal/Binaries/Win64/dwmapi.dll"
+    },
+    "notes": "Script mods need UE4SS, which installs here like a mod. For UE4SS to load, add WINEDLLOVERRIDES=\"dwmapi=n,b\" %command% to the game's Steam launch options. Script mods are placed in Pal/Binaries/Win64/Mods, and a UE4SS version that keeps its files in a ue4ss folder expects them in ue4ss/Mods instead."
+  },
+  {
+    "id": "pillarsofeternity2",
+    "name": "Pillars of Eternity II: Deadfire",
+    "steam": [
+      560130
+    ],
+    "executable": "PillarsOfEternityII.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "PillarsOfEternityII_Data/override"
+    },
+    "nexus_domain": "pillarsofeternity2",
+    "merge_mods": false,
+    "notes": "Use the Mod Manager in the game's own options to switch mods on and change their order."
+  },
+  {
+    "id": "prisonarchitect",
+    "name": "Prison Architect",
+    "steam": [
+      233450
+    ],
+    "executable": "Prison Architect64.exe",
+    "mod_path": {
+      "base": "appdata_local",
+      "path": "Introversion/Prison Architect/mods"
+    },
+    "nexus_domain": "prisonarchitect",
+    "merge_mods": true,
+    "notes": "Mods are placed where the Windows version of the game looks for them, so run the game through Proton rather than the Linux version."
+  },
+  {
+    "id": "rimworld",
+    "name": "RimWorld",
+    "steam": [
+      294100
+    ],
+    "executable": "RimWorldWin64.exe",
+    "native_executable": "RimWorldLinux",
+    "mod_path": {
+      "base": "game",
+      "path": "Mods"
+    },
+    "nexus_domain": "rimworld",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "file": [
+          "About.xml"
+        ],
+        "up": 1,
+        "keep_folder": true
+      }
+    ]
+  },
+  {
+    "id": "sekiro",
+    "name": "Sekiro",
+    "steam": [
+      814380
+    ],
+    "executable": "sekiro.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "mods"
+    },
+    "nexus_domain": "sekiro",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "as_is",
+        "when": {
+          "has_dir": [
+            "parts"
+          ]
+        }
+      },
+      {
+        "type": "flat",
+        "ext": [
+          ".partsbnd.dcx"
+        ],
+        "to": "parts"
+      }
+    ],
+    "notes": "Mods only work with Sekiro Mod Engine, which you must put into the game folder yourself. On Linux also set the Steam launch option WINEDLLOVERRIDES=\"dinput8=n,b\" %command% so that it is loaded."
+  },
+  {
+    "id": "spyroreignitedtrilogy",
+    "name": "Spyro Reignited Trilogy",
+    "steam": [
+      996580
+    ],
+    "executable": "Spyro.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "falcon/content/paks/~mods"
+    },
+    "nexus_domain": "spyroreignitedtrilogy",
+    "merge_mods": false,
+    "install": [
+      {
+        "type": "marker",
+        "ext": [
+          ".pak"
+        ],
+        "up": 0,
+        "keep_folder": false
+      }
+    ]
+  },
+  {
+    "id": "kotor",
+    "name": "Star Wars: KOTOR",
+    "steam": [
+      32370
+    ],
+    "executable": "swkotor.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "override"
+    },
+    "nexus_domain": "kotor",
+    "merge_mods": true,
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
+    "install": [
+      {
+        "type": "reject",
+        "message": "This mod is installed by running its TSLPatcher program, which this app cannot do. Unpack it yourself and run TSLPatcher with Proton.",
+        "when": {
+          "has_file": [
+            "tslpatcher.exe"
+          ]
+        }
+      },
+      {
+        "type": "reject",
+        "message": "This mod is installed by running its TSLPatcher program, which this app cannot do. Unpack it yourself and run TSLPatcher with Proton.",
+        "when": {
+          "has_dir": [
+            "tslpatchdata"
+          ]
+        }
+      },
+      {
+        "type": "anchor",
+        "dirs": [
+          "data",
+          "lips",
+          "miles",
+          "modules",
+          "movies",
+          "override",
+          "rims",
+          "saves",
+          "streammusic",
+          "streamsounds",
+          "streamvoice",
+          "streamwaves",
+          "texturepack"
+        ],
+        "keep": true,
+        "target": "root"
+      }
+    ],
+    "notes": "Mods that come with a TSLPatcher program cannot be installed here. Unpack those yourself and run TSLPatcher."
+  },
+  {
+    "id": "kotor2",
+    "name": "Star Wars: KOTOR II",
+    "steam": [
+      208580
+    ],
+    "executable": "swkotor2.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "override"
+    },
+    "nexus_domain": "kotor2",
+    "merge_mods": true,
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
+    "install": [
+      {
+        "type": "reject",
+        "message": "This mod is installed by running its TSLPatcher program, which this app cannot do. Unpack it yourself and run TSLPatcher with Proton.",
+        "when": {
+          "has_file": [
+            "tslpatcher.exe"
+          ]
+        }
+      },
+      {
+        "type": "reject",
+        "message": "This mod is installed by running its TSLPatcher program, which this app cannot do. Unpack it yourself and run TSLPatcher with Proton.",
+        "when": {
+          "has_dir": [
+            "tslpatchdata"
+          ]
+        }
+      },
+      {
+        "type": "anchor",
+        "dirs": [
+          "data",
+          "lips",
+          "miles",
+          "modules",
+          "movies",
+          "override",
+          "rims",
+          "saves",
+          "streammusic",
+          "streamsounds",
+          "streamvoice",
+          "streamwaves",
+          "texturepack"
+        ],
+        "keep": true,
+        "target": "root"
+      }
+    ],
+    "notes": "Mods that come with a TSLPatcher program cannot be installed here. Unpack those yourself and run TSLPatcher."
+  },
+  {
+    "id": "survivingmars",
+    "name": "Surviving Mars",
+    "steam": [
+      464920
+    ],
+    "executable": "MarsSteam.exe",
+    "mod_path": {
+      "base": "appdata_roaming",
+      "path": "Surviving Mars/mods"
+    },
+    "nexus_domain": "survivingmars",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "as_is",
+        "when": {
+          "has_dir": [
+            "Pack"
+          ],
+          "has_file": [
+            "modcontent.hpk"
+          ]
+        }
+      },
+      {
+        "type": "marker",
+        "file": [
+          "modcontent.hpk"
+        ],
+        "up": 0,
+        "keep_folder": true
+      }
+    ],
+    "notes": "Mods are placed where the Windows version of the game looks for them, so run the game through Proton rather than the Linux version."
+  },
+  {
+    "id": "teamfortress2",
+    "name": "Team Fortress 2",
+    "steam": [
+      440
+    ],
+    "executable": "tf_win64.exe",
+    "native_executable": "tf.sh",
+    "mod_path": {
+      "base": "game",
+      "path": "tf/custom"
+    },
+    "nexus_domain": "teamfortress2",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "ext": [
+          ".vpk"
+        ],
+        "up": 0,
+        "keep_folder": false
+      }
+    ]
+  },
+  {
+    "id": "witcher",
+    "name": "The Witcher",
+    "steam": [
+      20900
+    ],
+    "executable": "system/witcher.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Data/Override"
+    },
+    "nexus_domain": "witcher",
+    "merge_mods": true
+  },
+  {
+    "id": "witcher2",
+    "name": "The Witcher 2",
+    "steam": [
+      20920
+    ],
+    "executable": "bin/witcher2.exe",
+    "native_executable": "launcher",
+    "mod_path": {
+      "base": "game",
+      "path": "CookedPC"
+    },
+    "nexus_domain": "witcher2",
+    "merge_mods": true,
+    "targets": {
+      "usercontent": {
+        "base": "game",
+        "path": "UserContent"
+      }
+    },
+    "install": [
+      {
+        "type": "as_is",
+        "strip_wrapper": false,
+        "target": "usercontent",
+        "when": {
+          "has_file": [
+            "cook.hash"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "torchlight2",
+    "name": "Torchlight II",
+    "steam": [
+      200710
+    ],
+    "executable": "ModLauncher.exe",
+    "mod_path": {
+      "base": "documents",
+      "path": "My Games/Runic Games/Torchlight 2/mods"
+    },
+    "nexus_domain": "torchlight2",
+    "merge_mods": false,
+    "install": [
+      {
+        "type": "flat",
+        "ext": [
+          ".mod"
+        ]
+      }
+    ],
+    "notes": "Mods are placed where the Windows version of the game looks for them, so run the game through Proton rather than the Linux version."
+  },
+  {
+    "id": "totalwarthreekingdoms",
+    "name": "Total War: Three Kingdoms",
+    "steam": [
+      779340
+    ],
+    "executable": "Three_Kingdoms.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "data"
+    },
+    "nexus_domain": "totalwarthreekingdoms",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "ext": [
+          ".pack"
+        ],
+        "up": 0,
+        "keep_folder": false
+      }
+    ],
+    "notes": "After installing, switch each mod on in the Mod Manager of the game's launcher."
+  },
+  {
+    "id": "vampirebloodlines",
+    "name": "Vampire: The Masquerade Bloodlines",
+    "steam": [
+      2600
+    ],
+    "executable": "Vampire.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Vampire"
+    },
+    "nexus_domain": "vampirebloodlines",
+    "merge_mods": true,
+    "notes": "Mods are placed in the Vampire folder. If you play with the Unofficial Patch, the game reads the Unofficial_Patch folder instead, so move the mod's files there by hand."
+  },
+  {
+    "id": "warthunder",
+    "name": "War Thunder",
+    "steam": [
+      236390
+    ],
+    "executable": "win64/aces.exe",
+    "native_executable": "linux64/aces",
+    "mod_path": {
+      "base": "game",
+      "path": "UserSkins"
+    },
+    "nexus_domain": "warthunder",
+    "merge_mods": true,
+    "targets": {
+      "sound": {
+        "base": "game",
+        "path": "sound/mod"
+      }
+    },
+    "install": [
+      {
+        "type": "as_is",
+        "strip_wrapper": false,
+        "target": "sound",
+        "when": {
+          "has_ext": [
+            ".fsb"
+          ]
+        }
+      }
+    ],
+    "notes": "Sound mods only play after you open config.blk in the game folder and set enable_mod:b=yes inside the sound section."
+  },
+  {
+    "id": "wolcenlordsofmayhem",
+    "name": "Wolcen: Lords Of Mayhem",
+    "steam": [
+      424370
+    ],
+    "executable": "win_x64/Wolcen.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Game"
+    },
+    "nexus_domain": "wolcenlordsofmayhem",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "anchor",
+        "dirs": [
+          "levels",
+          "Lib",
+          "Loot",
+          "Objects",
+          "Umbra"
+        ],
+        "keep": true
+      }
+    ],
+    "notes": "If two mods change the same file, only one of them takes effect."
+  },
+  {
+    "id": "xrebirth",
+    "name": "X Rebirth",
+    "steam": [
+      2870
+    ],
+    "executable": "XRebirth.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "extensions"
+    },
+    "nexus_domain": "xrebirth",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "file": [
+          "content.xml"
+        ],
+        "up": 0,
+        "keep_folder": true
+      }
+    ],
+    "notes": "Only mods packaged as an extension folder with a content.xml file are placed correctly. Save games, shader injectors, tools and loose game files have to be copied into place by hand."
+  },
+  {
+    "id": "x4foundations",
+    "name": "X4: Foundations",
+    "steam": [
+      392160
+    ],
+    "executable": "X4.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "extensions"
+    },
+    "nexus_domain": "x4foundations",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "file": [
+          "content.xml"
+        ],
+        "up": 0,
+        "keep_folder": true
+      }
+    ]
+  },
+  {
+    "id": "xcom2",
+    "name": "XCOM 2",
+    "steam": [
+      268500
+    ],
+    "executable": "Binaries/Win64/XCom2.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "XComGame/Mods"
+    },
+    "nexus_domain": "xcom2",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "ext": [
+          ".XComMod"
+        ],
+        "up": 0,
+        "keep_folder": true
+      }
+    ],
+    "notes": "Mods only load after they are switched on. Tick each mod in the game's own launcher, or add a line like ActiveMods=\"ModName\" to XComGame/Config/DefaultModOptions.ini in the game folder. The mod's folder must have the same name as its .XComMod file."
+  },
+  {
+    "id": "xcom2-wotc",
+    "name": "XCOM 2: War of the Chosen",
+    "steam": [
+      268500
+    ],
+    "executable": "XCom2-WarOfTheChosen/Binaries/Win64/XCom2.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "XCom2-WarOfTheChosen/XComGame/Mods"
+    },
+    "nexus_domain": "xcom2",
+    "merge_mods": true,
+    "install": [
+      {
+        "type": "marker",
+        "ext": [
+          ".XComMod"
+        ],
+        "up": 0,
+        "keep_folder": true
+      }
+    ],
+    "notes": "Mods only load after they are switched on. Tick each mod in the game's own launcher, or add a line like ActiveMods=\"ModName\" to XCom2-WarOfTheChosen/XComGame/Config/DefaultModOptions.ini in the game folder. The mod's folder must have the same name as its .XComMod file."
+  }
+]

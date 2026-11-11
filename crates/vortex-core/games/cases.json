@@ -1,0 +1,2271 @@
+[
+  {
+    "game": "witcher3",
+    "files": [
+      "Wrap/Mods/modA/content/a.bundle",
+      "Wrap/readme.txt"
+    ],
+    "expect": [
+      [
+        "Wrap/Mods/modA/content/a.bundle",
+        "mods/modA/content/a.bundle"
+      ]
+    ]
+  },
+  {
+    "game": "grimdawn",
+    "files": [
+      "MyMod/database/my.arz"
+    ],
+    "expect": [
+      [
+        "MyMod/database/my.arz",
+        "MyMod/database/my.arz"
+      ]
+    ]
+  },
+  {
+    "game": "7daystodie",
+    "name": "Bigger Backpack",
+    "files": [
+      "BiggerBackpack/ModInfo.xml",
+      "BiggerBackpack/Config/items.xml",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "BiggerBackpack/ModInfo.xml",
+        "BiggerBackpack/ModInfo.xml"
+      ],
+      [
+        "BiggerBackpack/Config/items.xml",
+        "BiggerBackpack/Config/items.xml"
+      ]
+    ]
+  },
+  {
+    "game": "7daystodie",
+    "name": "Cool Modlet",
+    "files": [
+      "ModInfo.xml",
+      "Config/x.xml"
+    ],
+    "expect": [
+      [
+        "ModInfo.xml",
+        "Cool Modlet/ModInfo.xml"
+      ],
+      [
+        "Config/x.xml",
+        "Cool Modlet/Config/x.xml"
+      ]
+    ]
+  },
+  {
+    "game": "7daystodie",
+    "name": "Plugin",
+    "files": [
+      "Pack/BepInEx/plugins/a.dll",
+      "Pack/readme.txt"
+    ],
+    "expect": [
+      [
+        "Pack/BepInEx/plugins/a.dll",
+        "[root] BepInEx/plugins/a.dll"
+      ]
+    ]
+  },
+  {
+    "game": "7daystodie",
+    "name": "BepInEx",
+    "files": [
+      "BepInEx/core/BepInEx.dll",
+      "winhttp.dll",
+      "doorstop_config.ini"
+    ],
+    "expect": [
+      [
+        "BepInEx/core/BepInEx.dll",
+        "[root] BepInEx/core/BepInEx.dll"
+      ],
+      [
+        "winhttp.dll",
+        "[root] winhttp.dll"
+      ],
+      [
+        "doorstop_config.ini",
+        "[root] doorstop_config.ini"
+      ]
+    ]
+  },
+  {
+    "game": "ahatintime",
+    "name": "Cool Hat",
+    "files": [
+      "CoolHat/modinfo.ini",
+      "CoolHat/Content/hat.upk",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "CoolHat/modinfo.ini",
+        "CoolHat/modinfo.ini"
+      ],
+      [
+        "CoolHat/Content/hat.upk",
+        "CoolHat/Content/hat.upk"
+      ]
+    ]
+  },
+  {
+    "game": "ahatintime",
+    "name": "My Level",
+    "files": [
+      "modinfo.ini",
+      "Maps/level.umap"
+    ],
+    "expect": [
+      [
+        "modinfo.ini",
+        "My Level/modinfo.ini"
+      ],
+      [
+        "Maps/level.umap",
+        "My Level/Maps/level.umap"
+      ]
+    ]
+  },
+  {
+    "game": "baldursgate3",
+    "name": "My Mod",
+    "files": [
+      "MyMod/MyMod.pak",
+      "MyMod/info.json",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "MyMod/MyMod.pak",
+        "MyMod.pak"
+      ],
+      [
+        "MyMod/info.json",
+        "info.json"
+      ]
+    ]
+  },
+  {
+    "game": "baldursgate3",
+    "name": "Script Extender",
+    "files": [
+      "DWrite.dll",
+      "ScriptExtenderSettings.json"
+    ],
+    "expect": [
+      [
+        "DWrite.dll",
+        "[bin] DWrite.dll"
+      ]
+    ]
+  },
+  {
+    "game": "baldursgate3",
+    "name": "Cool Hair",
+    "files": [
+      "Cool Hair/Data/Generated/Public/Shared/Assets/hair.GR2",
+      "Cool Hair/Data/Public/Shared/x.lsx",
+      "Cool Hair/readme.txt"
+    ],
+    "expect": [
+      [
+        "Cool Hair/Data/Generated/Public/Shared/Assets/hair.GR2",
+        "[data] Generated/Public/Shared/Assets/hair.GR2"
+      ],
+      [
+        "Cool Hair/Data/Public/Shared/x.lsx",
+        "[data] Public/Shared/x.lsx"
+      ]
+    ]
+  },
+  {
+    "game": "baldursgate3",
+    "name": "Loose",
+    "files": [
+      "Generated/Public/a.dds",
+      "Public/Game/b.lsx",
+      "Localization/English/c.loca"
+    ],
+    "expect": [
+      [
+        "Generated/Public/a.dds",
+        "[data] Generated/Public/a.dds"
+      ],
+      [
+        "Public/Game/b.lsx",
+        "[data] Public/Game/b.lsx"
+      ],
+      [
+        "Localization/English/c.loca",
+        "[data] Localization/English/c.loca"
+      ]
+    ]
+  },
+  {
+    "game": "baldursgate3",
+    "name": "Native Loader",
+    "files": [
+      "bin/NativeMods/thing.dll",
+      "bin/bink2w64.dll"
+    ],
+    "expect": [
+      [
+        "bin/NativeMods/thing.dll",
+        "[root] bin/NativeMods/thing.dll"
+      ],
+      [
+        "bin/bink2w64.dll",
+        "[root] bin/bink2w64.dll"
+      ]
+    ]
+  },
+  {
+    "game": "baldursgate3",
+    "name": "SE Config",
+    "files": [
+      "Script Extender/MyMod/config.json"
+    ],
+    "expect": [
+      [
+        "Script Extender/MyMod/config.json",
+        "[se_config] MyMod/config.json"
+      ]
+    ]
+  },
+  {
+    "game": "baldursgate3",
+    "name": "Mod Fixer",
+    "files": [
+      "ModFixer/ModFixer.pak",
+      "ModFixer/readme.txt"
+    ],
+    "expect": [
+      [
+        "ModFixer/ModFixer.pak",
+        "ModFixer.pak"
+      ]
+    ]
+  },
+  {
+    "game": "bladeandsorcery",
+    "name": "Fire Sword",
+    "files": [
+      "FireSword/manifest.json",
+      "FireSword/Item_FireSword.json",
+      "FireSword/bundles/x.bundle",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "FireSword/manifest.json",
+        "FireSword/manifest.json"
+      ],
+      [
+        "FireSword/Item_FireSword.json",
+        "FireSword/Item_FireSword.json"
+      ],
+      [
+        "FireSword/bundles/x.bundle",
+        "FireSword/bundles/x.bundle"
+      ]
+    ]
+  },
+  {
+    "game": "bladeandsorcery",
+    "name": "Magic Pack",
+    "files": [
+      "manifest.json",
+      "catalog.json"
+    ],
+    "expect": [
+      [
+        "manifest.json",
+        "Magic Pack/manifest.json"
+      ],
+      [
+        "catalog.json",
+        "Magic Pack/catalog.json"
+      ]
+    ]
+  },
+  {
+    "game": "bladeandsorcery",
+    "name": "Injector",
+    "files": [
+      "BladeAndSorcery_Data/StreamingAssets/Mods/X/manifest.json",
+      "BladeAndSorcery_Data/Managed/Y.dll"
+    ],
+    "expect": [
+      [
+        "BladeAndSorcery_Data/StreamingAssets/Mods/X/manifest.json",
+        "[root] BladeAndSorcery_Data/StreamingAssets/Mods/X/manifest.json"
+      ],
+      [
+        "BladeAndSorcery_Data/Managed/Y.dll",
+        "[root] BladeAndSorcery_Data/Managed/Y.dll"
+      ]
+    ]
+  },
+  {
+    "game": "bloodstainedritualofthenight",
+    "name": "Cool Mod",
+    "files": [
+      "CoolMod/CoolMod_P.pak",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "CoolMod/CoolMod_P.pak",
+        "CoolMod_P.pak"
+      ]
+    ]
+  },
+  {
+    "game": "bloodstainedritualofthenight",
+    "name": "Two Paks",
+    "files": [
+      "a_P.pak",
+      "b_P.pak"
+    ],
+    "expect": [
+      [
+        "a_P.pak",
+        "a_P.pak"
+      ],
+      [
+        "b_P.pak",
+        "b_P.pak"
+      ]
+    ]
+  },
+  {
+    "game": "codevein",
+    "name": "Cool Mod",
+    "files": [
+      "CoolMod/CoolMod_P.pak",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "CoolMod/CoolMod_P.pak",
+        "CoolMod_P.pak"
+      ]
+    ]
+  },
+  {
+    "game": "codevein",
+    "name": "Two Paks",
+    "files": [
+      "a_P.pak",
+      "b_P.pak"
+    ],
+    "expect": [
+      [
+        "a_P.pak",
+        "a_P.pak"
+      ],
+      [
+        "b_P.pak",
+        "b_P.pak"
+      ]
+    ]
+  },
+  {
+    "game": "conanexiles",
+    "name": "Pippi",
+    "files": [
+      "Pippi/Pippi.pak",
+      "Pippi/notes.txt",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "Pippi/Pippi.pak",
+        "Pippi.pak"
+      ],
+      [
+        "Pippi/notes.txt",
+        "notes.txt"
+      ]
+    ]
+  },
+  {
+    "game": "conanexiles",
+    "name": "Better Build",
+    "files": [
+      "BetterBuild.pak"
+    ],
+    "expect": [
+      [
+        "BetterBuild.pak",
+        "BetterBuild.pak"
+      ]
+    ]
+  },
+  {
+    "game": "darkestdungeon",
+    "name": "My Class",
+    "files": [
+      "MyClass/project.xml",
+      "MyClass/heroes/myclass/myclass.info.darkest",
+      "preview.png"
+    ],
+    "expect": [
+      [
+        "MyClass/project.xml",
+        "MyClass/project.xml"
+      ],
+      [
+        "MyClass/heroes/myclass/myclass.info.darkest",
+        "MyClass/heroes/myclass/myclass.info.darkest"
+      ]
+    ]
+  },
+  {
+    "game": "darkestdungeon",
+    "name": "Faster Walk",
+    "files": [
+      "project.xml",
+      "preview_icon.png",
+      "shared/rules.json"
+    ],
+    "expect": [
+      [
+        "project.xml",
+        "Faster Walk/project.xml"
+      ],
+      [
+        "preview_icon.png",
+        "Faster Walk/preview_icon.png"
+      ],
+      [
+        "shared/rules.json",
+        "Faster Walk/shared/rules.json"
+      ]
+    ]
+  },
+  {
+    "game": "darksouls2",
+    "name": "Lighting Engine",
+    "files": [
+      "DS2LightingEngine/dxgi.dll",
+      "DS2LightingEngine/DS2LightingEngine/config.ini",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "DS2LightingEngine/dxgi.dll",
+        "Game/dxgi.dll"
+      ],
+      [
+        "DS2LightingEngine/DS2LightingEngine/config.ini",
+        "Game/DS2LightingEngine/config.ini"
+      ]
+    ]
+  },
+  {
+    "game": "darksouls2",
+    "name": "ModEngine",
+    "files": [
+      "dinput8.dll",
+      "modengine.ini",
+      "mods/param/x.param"
+    ],
+    "expect": [
+      [
+        "dinput8.dll",
+        "Game/dinput8.dll"
+      ],
+      [
+        "modengine.ini",
+        "Game/modengine.ini"
+      ],
+      [
+        "mods/param/x.param",
+        "Game/mods/param/x.param"
+      ]
+    ]
+  },
+  {
+    "game": "darksouls2",
+    "name": "Better Balance",
+    "files": [
+      "Better Balance/enc_regulation.bnd.dcx",
+      "Better Balance/readme.txt"
+    ],
+    "expect": [
+      [
+        "Better Balance/enc_regulation.bnd.dcx",
+        "Game/enc_regulation.bnd.dcx"
+      ]
+    ]
+  },
+  {
+    "game": "darksouls2",
+    "name": "HD Armor",
+    "files": [
+      "HD Armor/textures/a.dds",
+      "HD Armor/b.png",
+      "HD Armor/readme.txt"
+    ],
+    "expect": [
+      [
+        "HD Armor/textures/a.dds",
+        "Game/tex_override/a.dds"
+      ],
+      [
+        "HD Armor/b.png",
+        "Game/tex_override/b.png"
+      ]
+    ]
+  },
+  {
+    "game": "darksouls2",
+    "name": "Seamless Co-op",
+    "files": [
+      "ds2sc_launcher.exe",
+      "SeamlessCoop/ds2sc.dll",
+      "SeamlessCoop/ds2sc_settings.ini"
+    ],
+    "expect": [
+      [
+        "ds2sc_launcher.exe",
+        "Game/ds2sc_launcher.exe"
+      ],
+      [
+        "SeamlessCoop/ds2sc.dll",
+        "Game/SeamlessCoop/ds2sc.dll"
+      ],
+      [
+        "SeamlessCoop/ds2sc_settings.ini",
+        "Game/SeamlessCoop/ds2sc_settings.ini"
+      ]
+    ]
+  },
+  {
+    "game": "dawnofman",
+    "name": "Frozen North",
+    "files": [
+      "Frozen North/frozen_north.scn.xml",
+      "Frozen North/frozen_north.lng.xml"
+    ],
+    "expect": [
+      [
+        "Frozen North/frozen_north.scn.xml",
+        "[scenarios] Frozen North/frozen_north.scn.xml"
+      ],
+      [
+        "Frozen North/frozen_north.lng.xml",
+        "[scenarios] Frozen North/frozen_north.lng.xml"
+      ]
+    ]
+  },
+  {
+    "game": "dawnofman",
+    "name": "Island Start",
+    "files": [
+      "island.scn.xml"
+    ],
+    "expect": [
+      [
+        "island.scn.xml",
+        "[scenarios] Island Start/island.scn.xml"
+      ]
+    ]
+  },
+  {
+    "game": "dawnofman",
+    "name": "Better UI",
+    "files": [
+      "BetterUI/Info.json",
+      "BetterUI/BetterUI.dll",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "BetterUI/Info.json",
+        "BetterUI/Info.json"
+      ],
+      [
+        "BetterUI/BetterUI.dll",
+        "BetterUI/BetterUI.dll"
+      ]
+    ]
+  },
+  {
+    "game": "dragonage",
+    "name": "My Armor",
+    "files": [
+      "MyArmor/armor.erf",
+      "MyArmor/readme.txt"
+    ],
+    "expect": [
+      [
+        "MyArmor/armor.erf",
+        "MyArmor/armor.erf"
+      ],
+      [
+        "MyArmor/readme.txt",
+        "MyArmor/readme.txt"
+      ]
+    ]
+  },
+  {
+    "game": "dragonage",
+    "name": "Chargen",
+    "files": [
+      "chargenmorphcfg.xml"
+    ],
+    "expect": [
+      [
+        "chargenmorphcfg.xml",
+        "chargenmorphcfg.xml"
+      ]
+    ]
+  },
+  {
+    "game": "dragonsdogma",
+    "name": "New Armor",
+    "files": [
+      "rom/eq/a_acc/x.arc",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "rom/eq/a_acc/x.arc",
+        "rom/eq/a_acc/x.arc"
+      ],
+      [
+        "readme.txt",
+        "readme.txt"
+      ]
+    ]
+  },
+  {
+    "game": "dragonsdogma",
+    "name": "Title",
+    "files": [
+      "rom/game_main.arc"
+    ],
+    "expect": [
+      [
+        "rom/game_main.arc",
+        "rom/game_main.arc"
+      ]
+    ]
+  },
+  {
+    "game": "elex",
+    "files": [
+      "MyMod/c_1_na.pak",
+      "MyMod/notes.txt"
+    ],
+    "expect": [
+      [
+        "MyMod/c_1_na.pak",
+        "c_1_na.pak"
+      ],
+      [
+        "MyMod/notes.txt",
+        "notes.txt"
+      ]
+    ]
+  },
+  {
+    "game": "elex",
+    "files": [
+      "m_9_na.pak"
+    ],
+    "expect": [
+      [
+        "m_9_na.pak",
+        "m_9_na.pak"
+      ]
+    ]
+  },
+  {
+    "game": "elex",
+    "files": [
+      "docs/readme.txt",
+      "data/packed/w_1_na.pak"
+    ],
+    "expect": [
+      [
+        "data/packed/w_1_na.pak",
+        "w_1_na.pak"
+      ]
+    ]
+  },
+  {
+    "game": "factorio",
+    "files": [
+      "cool-mod_1.0.0/info.json",
+      "cool-mod_1.0.0/control.lua"
+    ],
+    "expect": [
+      [
+        "cool-mod_1.0.0/info.json",
+        "cool-mod_1.0.0/info.json"
+      ],
+      [
+        "cool-mod_1.0.0/control.lua",
+        "cool-mod_1.0.0/control.lua"
+      ]
+    ]
+  },
+  {
+    "game": "factorio",
+    "files": [
+      "other-mod_0.2.1/info.json",
+      "other-mod_0.2.1/data.lua",
+      "other-mod_0.2.1/graphics/icon.png"
+    ],
+    "expect": [
+      [
+        "other-mod_0.2.1/info.json",
+        "other-mod_0.2.1/info.json"
+      ],
+      [
+        "other-mod_0.2.1/data.lua",
+        "other-mod_0.2.1/data.lua"
+      ],
+      [
+        "other-mod_0.2.1/graphics/icon.png",
+        "other-mod_0.2.1/graphics/icon.png"
+      ]
+    ]
+  },
+  {
+    "game": "galacticcivilizations3",
+    "files": [
+      "MyFaction.faction"
+    ],
+    "expect": [
+      [
+        "MyFaction.faction",
+        "Factions/MyFaction.faction"
+      ]
+    ]
+  },
+  {
+    "game": "galacticcivilizations3",
+    "files": [
+      "CoolMod/Game/ShipDefs.xml",
+      "CoolMod/readme.txt"
+    ],
+    "expect": [
+      [
+        "CoolMod/Game/ShipDefs.xml",
+        "Mods/CoolMod/Game/ShipDefs.xml"
+      ],
+      [
+        "CoolMod/readme.txt",
+        "Mods/CoolMod/readme.txt"
+      ]
+    ]
+  },
+  {
+    "game": "greedfall",
+    "files": [
+      "MyMod/datalocal/textures/a.spk",
+      "MyMod/readme.txt"
+    ],
+    "expect": [
+      [
+        "MyMod/datalocal/textures/a.spk",
+        "textures/a.spk"
+      ]
+    ]
+  },
+  {
+    "game": "greedfall",
+    "files": [
+      "sound/voices.spk"
+    ],
+    "expect": [
+      [
+        "sound/voices.spk",
+        "sound/voices.spk"
+      ]
+    ]
+  },
+  {
+    "game": "kenshi",
+    "files": [
+      "CoolMod/CoolMod.mod",
+      "CoolMod/data/x.txt"
+    ],
+    "expect": [
+      [
+        "CoolMod/CoolMod.mod",
+        "CoolMod/CoolMod.mod"
+      ],
+      [
+        "CoolMod/data/x.txt",
+        "CoolMod/data/x.txt"
+      ]
+    ]
+  },
+  {
+    "game": "kenshi",
+    "files": [
+      "CoolMod.mod",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "CoolMod.mod",
+        "CoolMod/CoolMod.mod"
+      ],
+      [
+        "readme.txt",
+        "CoolMod/readme.txt"
+      ]
+    ],
+    "name": "CoolMod"
+  },
+  {
+    "game": "kenshi",
+    "files": [
+      "wrap/CoolMod/CoolMod.mod",
+      "wrap/CoolMod/_CoolMod.info",
+      "wrap/note.txt"
+    ],
+    "expect": [
+      [
+        "wrap/CoolMod/CoolMod.mod",
+        "CoolMod/CoolMod.mod"
+      ],
+      [
+        "wrap/CoolMod/_CoolMod.info",
+        "CoolMod/_CoolMod.info"
+      ]
+    ]
+  },
+  {
+    "game": "kingdomcomedeliverance",
+    "files": [
+      "mod.manifest",
+      "Data/cool.pak"
+    ],
+    "expect": [
+      [
+        "mod.manifest",
+        "mod.manifest"
+      ],
+      [
+        "Data/cool.pak",
+        "Data/cool.pak"
+      ]
+    ]
+  },
+  {
+    "game": "kingdomcomedeliverance",
+    "files": [
+      "Data/x.pak",
+      "Localization/english_xml.pak"
+    ],
+    "expect": [
+      [
+        "Data/x.pak",
+        "Data/x.pak"
+      ],
+      [
+        "Localization/english_xml.pak",
+        "Localization/english_xml.pak"
+      ]
+    ]
+  },
+  {
+    "game": "monsterhunterworld",
+    "files": [
+      "loader.dll",
+      "loader-config.json",
+      "dinput8.dll",
+      "nativePC/plugins/!CRCBypass.dll"
+    ],
+    "expect": [
+      [
+        "loader.dll",
+        "[root] loader.dll"
+      ],
+      [
+        "loader-config.json",
+        "[root] loader-config.json"
+      ],
+      [
+        "dinput8.dll",
+        "[root] dinput8.dll"
+      ],
+      [
+        "nativePC/plugins/!CRCBypass.dll",
+        "[root] nativePC/plugins/!CRCBypass.dll"
+      ]
+    ]
+  },
+  {
+    "game": "monsterhunterworld",
+    "files": [
+      "Cool Armor/nativePC/pl/f_equip/pl001/body/mod/f_body001.mod3",
+      "Cool Armor/readme.txt"
+    ],
+    "expect": [
+      [
+        "Cool Armor/nativePC/pl/f_equip/pl001/body/mod/f_body001.mod3",
+        "pl/f_equip/pl001/body/mod/f_body001.mod3"
+      ]
+    ]
+  },
+  {
+    "game": "monsterhunterworld",
+    "files": [
+      "MyPreset/Clear.ini",
+      "MyPreset/readme.txt"
+    ],
+    "expect": [
+      [
+        "MyPreset/Clear.ini",
+        "[root] Clear.ini"
+      ]
+    ]
+  },
+  {
+    "game": "morrowind",
+    "files": [
+      "Cool Mod.esp",
+      "Textures/cool.dds"
+    ],
+    "expect": [
+      [
+        "Cool Mod.esp",
+        "Cool Mod.esp"
+      ],
+      [
+        "Textures/cool.dds",
+        "Textures/cool.dds"
+      ]
+    ]
+  },
+  {
+    "game": "morrowind",
+    "files": [
+      "Meshes/x/a.nif",
+      "Icons/x/a.tga"
+    ],
+    "expect": [
+      [
+        "Meshes/x/a.nif",
+        "Meshes/x/a.nif"
+      ],
+      [
+        "Icons/x/a.tga",
+        "Icons/x/a.tga"
+      ]
+    ]
+  },
+  {
+    "game": "mountandblade",
+    "files": [
+      "Floris/module.ini",
+      "Floris/Resource/a.brf"
+    ],
+    "expect": [
+      [
+        "Floris/module.ini",
+        "Floris/module.ini"
+      ],
+      [
+        "Floris/Resource/a.brf",
+        "Floris/Resource/a.brf"
+      ]
+    ]
+  },
+  {
+    "game": "mountandblade",
+    "files": [
+      "module.ini",
+      "Textures/a.dds"
+    ],
+    "expect": [
+      [
+        "module.ini",
+        "Cool Module/module.ini"
+      ],
+      [
+        "Textures/a.dds",
+        "Cool Module/Textures/a.dds"
+      ]
+    ],
+    "name": "Cool Module"
+  },
+  {
+    "game": "mountandblade",
+    "files": [
+      "pack/a.dds",
+      "pack/b.dds",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "pack/a.dds",
+        "native/textures/a.dds"
+      ],
+      [
+        "pack/b.dds",
+        "native/textures/b.dds"
+      ]
+    ]
+  },
+  {
+    "game": "mountandblade",
+    "files": [
+      "Textures/a.dds",
+      "Resource/b.brf"
+    ],
+    "expect": [
+      [
+        "Textures/a.dds",
+        "native/Textures/a.dds"
+      ],
+      [
+        "Resource/b.brf",
+        "native/Resource/b.brf"
+      ]
+    ]
+  },
+  {
+    "game": "mbwarband",
+    "files": [
+      "Floris/module.ini",
+      "Floris/Resource/a.brf"
+    ],
+    "expect": [
+      [
+        "Floris/module.ini",
+        "Floris/module.ini"
+      ],
+      [
+        "Floris/Resource/a.brf",
+        "Floris/Resource/a.brf"
+      ]
+    ]
+  },
+  {
+    "game": "mbwarband",
+    "files": [
+      "module.ini",
+      "Textures/a.dds"
+    ],
+    "expect": [
+      [
+        "module.ini",
+        "Cool Module/module.ini"
+      ],
+      [
+        "Textures/a.dds",
+        "Cool Module/Textures/a.dds"
+      ]
+    ],
+    "name": "Cool Module"
+  },
+  {
+    "game": "mbwarband",
+    "files": [
+      "pack/a.dds",
+      "pack/b.dds",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "pack/a.dds",
+        "native/textures/a.dds"
+      ],
+      [
+        "pack/b.dds",
+        "native/textures/b.dds"
+      ]
+    ]
+  },
+  {
+    "game": "mbwarband",
+    "files": [
+      "Textures/a.dds",
+      "Resource/b.brf"
+    ],
+    "expect": [
+      [
+        "Textures/a.dds",
+        "native/Textures/a.dds"
+      ],
+      [
+        "Resource/b.brf",
+        "native/Resource/b.brf"
+      ]
+    ]
+  },
+  {
+    "game": "mbwithfireandsword",
+    "files": [
+      "Floris/module.ini",
+      "Floris/Resource/a.brf"
+    ],
+    "expect": [
+      [
+        "Floris/module.ini",
+        "Floris/module.ini"
+      ],
+      [
+        "Floris/Resource/a.brf",
+        "Floris/Resource/a.brf"
+      ]
+    ]
+  },
+  {
+    "game": "mbwithfireandsword",
+    "files": [
+      "module.ini",
+      "Textures/a.dds"
+    ],
+    "expect": [
+      [
+        "module.ini",
+        "Cool Module/module.ini"
+      ],
+      [
+        "Textures/a.dds",
+        "Cool Module/Textures/a.dds"
+      ]
+    ],
+    "name": "Cool Module"
+  },
+  {
+    "game": "mbwithfireandsword",
+    "files": [
+      "pack/a.dds",
+      "pack/b.dds",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "pack/a.dds",
+        "Ogniem i Mieczem/textures/a.dds"
+      ],
+      [
+        "pack/b.dds",
+        "Ogniem i Mieczem/textures/b.dds"
+      ]
+    ]
+  },
+  {
+    "game": "mbwithfireandsword",
+    "files": [
+      "Textures/a.dds",
+      "Resource/b.brf"
+    ],
+    "expect": [
+      [
+        "Textures/a.dds",
+        "Ogniem i Mieczem/Textures/a.dds"
+      ],
+      [
+        "Resource/b.brf",
+        "Ogniem i Mieczem/Resource/b.brf"
+      ]
+    ]
+  },
+  {
+    "game": "nwnee",
+    "files": [
+      "MyHaks/a.hak",
+      "MyHaks/b.hak",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "MyHaks/a.hak",
+        "hak/a.hak"
+      ],
+      [
+        "MyHaks/b.hak",
+        "hak/b.hak"
+      ]
+    ]
+  },
+  {
+    "game": "nwnee",
+    "files": [
+      "override/a.2da",
+      "override/b.mdl"
+    ],
+    "expect": [
+      [
+        "override/a.2da",
+        "override/a.2da"
+      ],
+      [
+        "override/b.mdl",
+        "override/b.mdl"
+      ]
+    ]
+  },
+  {
+    "game": "nwnee",
+    "files": [
+      "a.2da",
+      "sub/b.ncs"
+    ],
+    "expect": [
+      [
+        "a.2da",
+        "override/a.2da"
+      ],
+      [
+        "sub/b.ncs",
+        "override/b.ncs"
+      ]
+    ]
+  },
+  {
+    "game": "nwnee",
+    "files": [
+      "Adventure/My Module.mod",
+      "Adventure/readme.txt"
+    ],
+    "expect": [
+      [
+        "Adventure/My Module.mod",
+        "modules/My Module.mod"
+      ]
+    ]
+  },
+  {
+    "game": "nwnee",
+    "files": [
+      "hak/cep.hak",
+      "tlk/cep.tlk",
+      "modules/demo.mod"
+    ],
+    "expect": [
+      [
+        "hak/cep.hak",
+        "hak/cep.hak"
+      ],
+      [
+        "tlk/cep.tlk",
+        "tlk/cep.tlk"
+      ],
+      [
+        "modules/demo.mod",
+        "modules/demo.mod"
+      ]
+    ]
+  },
+  {
+    "game": "nomanssky",
+    "files": [
+      "MyMod/GLOBALS.MBIN",
+      "MyMod/readme.txt"
+    ],
+    "expect": [
+      [
+        "MyMod/GLOBALS.MBIN",
+        "MyMod/GLOBALS.MBIN"
+      ],
+      [
+        "MyMod/readme.txt",
+        "MyMod/readme.txt"
+      ]
+    ]
+  },
+  {
+    "game": "nomanssky",
+    "files": [
+      "cool.pak"
+    ],
+    "expect": [
+      [
+        "cool.pak",
+        "[pcbanks_mods] cool.pak"
+      ]
+    ]
+  },
+  {
+    "game": "nomanssky",
+    "files": [
+      "NMSE/nmse.dll",
+      "NMSE/loader.exe",
+      "x.pak"
+    ],
+    "expect": [
+      [
+        "NMSE/nmse.dll",
+        "[binaries] NMSE/nmse.dll"
+      ],
+      [
+        "NMSE/loader.exe",
+        "[binaries] NMSE/loader.exe"
+      ],
+      [
+        "x.pak",
+        "[binaries] x.pak"
+      ]
+    ]
+  },
+  {
+    "game": "pillarsofeternity2",
+    "files": [
+      "MyMod/manifest.json",
+      "MyMod/design/gamedata/x.gamedatabundle"
+    ],
+    "expect": [
+      [
+        "MyMod/manifest.json",
+        "MyMod/manifest.json"
+      ],
+      [
+        "MyMod/design/gamedata/x.gamedatabundle",
+        "MyMod/design/gamedata/x.gamedatabundle"
+      ]
+    ]
+  },
+  {
+    "game": "pillarsofeternity2",
+    "files": [
+      "manifest.json",
+      "thumb.png"
+    ],
+    "expect": [
+      [
+        "manifest.json",
+        "manifest.json"
+      ],
+      [
+        "thumb.png",
+        "thumb.png"
+      ]
+    ]
+  },
+  {
+    "game": "prisonarchitect",
+    "files": [
+      "CoolMod/manifest.txt",
+      "CoolMod/data/materials.txt"
+    ],
+    "expect": [
+      [
+        "CoolMod/manifest.txt",
+        "CoolMod/manifest.txt"
+      ],
+      [
+        "CoolMod/data/materials.txt",
+        "CoolMod/data/materials.txt"
+      ]
+    ]
+  },
+  {
+    "game": "prisonarchitect",
+    "files": [
+      "manifest.txt",
+      "data/materials.txt"
+    ],
+    "expect": [
+      [
+        "manifest.txt",
+        "manifest.txt"
+      ],
+      [
+        "data/materials.txt",
+        "data/materials.txt"
+      ]
+    ]
+  },
+  {
+    "game": "rimworld",
+    "name": "Cool Mod",
+    "files": [
+      "CoolMod-1.2/About/About.xml",
+      "CoolMod-1.2/Defs/x.xml",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "CoolMod-1.2/About/About.xml",
+        "CoolMod-1.2/About/About.xml"
+      ],
+      [
+        "CoolMod-1.2/Defs/x.xml",
+        "CoolMod-1.2/Defs/x.xml"
+      ]
+    ]
+  },
+  {
+    "game": "rimworld",
+    "name": "Cool Mod",
+    "files": [
+      "About/About.xml",
+      "Defs/x.xml"
+    ],
+    "expect": [
+      [
+        "About/About.xml",
+        "Cool Mod/About/About.xml"
+      ],
+      [
+        "Defs/x.xml",
+        "Cool Mod/Defs/x.xml"
+      ]
+    ]
+  },
+  {
+    "game": "sekiro",
+    "files": [
+      "Skin/am_m_1000.partsbnd.dcx",
+      "Skin/readme.txt"
+    ],
+    "expect": [
+      [
+        "Skin/am_m_1000.partsbnd.dcx",
+        "parts/am_m_1000.partsbnd.dcx"
+      ]
+    ]
+  },
+  {
+    "game": "sekiro",
+    "files": [
+      "parts/a.partsbnd.dcx",
+      "chr/c0000.chrbnd.dcx"
+    ],
+    "expect": [
+      [
+        "parts/a.partsbnd.dcx",
+        "parts/a.partsbnd.dcx"
+      ],
+      [
+        "chr/c0000.chrbnd.dcx",
+        "chr/c0000.chrbnd.dcx"
+      ]
+    ]
+  },
+  {
+    "game": "sekiro",
+    "files": [
+      "sfx/x.ffxbnd.dcx"
+    ],
+    "expect": [
+      [
+        "sfx/x.ffxbnd.dcx",
+        "sfx/x.ffxbnd.dcx"
+      ]
+    ]
+  },
+  {
+    "game": "spyroreignitedtrilogy",
+    "files": [
+      "Wrap/cool_P.pak",
+      "Wrap/notes.txt",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "Wrap/cool_P.pak",
+        "cool_P.pak"
+      ],
+      [
+        "Wrap/notes.txt",
+        "notes.txt"
+      ]
+    ]
+  },
+  {
+    "game": "spyroreignitedtrilogy",
+    "files": [
+      "a.pak",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "a.pak",
+        "a.pak"
+      ],
+      [
+        "readme.txt",
+        "readme.txt"
+      ]
+    ]
+  },
+  {
+    "game": "survivingmars",
+    "files": [
+      "CoolMod/ModContent.hpk",
+      "CoolMod/metadata.lua",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "CoolMod/ModContent.hpk",
+        "CoolMod/ModContent.hpk"
+      ],
+      [
+        "CoolMod/metadata.lua",
+        "CoolMod/metadata.lua"
+      ]
+    ]
+  },
+  {
+    "game": "survivingmars",
+    "name": "Cool Mod",
+    "files": [
+      "ModContent.hpk",
+      "metadata.lua"
+    ],
+    "expect": [
+      [
+        "ModContent.hpk",
+        "Cool Mod/ModContent.hpk"
+      ],
+      [
+        "metadata.lua",
+        "Cool Mod/metadata.lua"
+      ]
+    ]
+  },
+  {
+    "game": "survivingmars",
+    "files": [
+      "CoolMod/Pack/ModContent.hpk",
+      "CoolMod/metadata.lua"
+    ],
+    "expect": [
+      [
+        "CoolMod/Pack/ModContent.hpk",
+        "CoolMod/Pack/ModContent.hpk"
+      ],
+      [
+        "CoolMod/metadata.lua",
+        "CoolMod/metadata.lua"
+      ]
+    ]
+  },
+  {
+    "game": "kotor",
+    "files": [
+      "Mod/Override/a.tga",
+      "Mod/StreamMusic/b.wav",
+      "Mod/readme.txt"
+    ],
+    "expect": [
+      [
+        "Mod/Override/a.tga",
+        "[root] Override/a.tga"
+      ],
+      [
+        "Mod/StreamMusic/b.wav",
+        "[root] StreamMusic/b.wav"
+      ]
+    ]
+  },
+  {
+    "game": "kotor",
+    "files": [
+      "a.tga",
+      "b.2da"
+    ],
+    "expect": [
+      [
+        "a.tga",
+        "a.tga"
+      ],
+      [
+        "b.2da",
+        "b.2da"
+      ]
+    ]
+  },
+  {
+    "game": "kotor",
+    "files": [
+      "Mod/TSLPatcher.exe",
+      "Mod/tslpatchdata/changes.ini",
+      "Mod/tslpatchdata/a.2da"
+    ],
+    "expect": []
+  },
+  {
+    "game": "kotor2",
+    "files": [
+      "Mod/Override/a.tga",
+      "Mod/StreamMusic/b.wav",
+      "Mod/readme.txt"
+    ],
+    "expect": [
+      [
+        "Mod/Override/a.tga",
+        "[root] Override/a.tga"
+      ],
+      [
+        "Mod/StreamMusic/b.wav",
+        "[root] StreamMusic/b.wav"
+      ]
+    ]
+  },
+  {
+    "game": "kotor2",
+    "files": [
+      "a.tga",
+      "b.2da"
+    ],
+    "expect": [
+      [
+        "a.tga",
+        "a.tga"
+      ],
+      [
+        "b.2da",
+        "b.2da"
+      ]
+    ]
+  },
+  {
+    "game": "kotor2",
+    "files": [
+      "Mod/TSLPatcher.exe",
+      "Mod/tslpatchdata/changes.ini",
+      "Mod/tslpatchdata/a.2da"
+    ],
+    "expect": []
+  },
+  {
+    "game": "teamfortress2",
+    "files": [
+      "MyHud/hud.vpk",
+      "MyHud/info.txt",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "MyHud/hud.vpk",
+        "hud.vpk"
+      ],
+      [
+        "MyHud/info.txt",
+        "info.txt"
+      ]
+    ]
+  },
+  {
+    "game": "teamfortress2",
+    "files": [
+      "myhud/resource/ui/x.res",
+      "myhud/info.vdf"
+    ],
+    "expect": [
+      [
+        "myhud/resource/ui/x.res",
+        "myhud/resource/ui/x.res"
+      ],
+      [
+        "myhud/info.vdf",
+        "myhud/info.vdf"
+      ]
+    ]
+  },
+  {
+    "game": "torchlight2",
+    "files": [
+      "Wrap/Cool.MOD",
+      "Wrap/readme.txt"
+    ],
+    "expect": [
+      [
+        "Wrap/Cool.MOD",
+        "Cool.MOD"
+      ]
+    ]
+  },
+  {
+    "game": "torchlight2",
+    "files": [
+      "cool.mod"
+    ],
+    "expect": [
+      [
+        "cool.mod",
+        "cool.mod"
+      ]
+    ]
+  },
+  {
+    "game": "totalwarthreekingdoms",
+    "files": [
+      "mod/cool.pack",
+      "mod/cool.png",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "mod/cool.pack",
+        "cool.pack"
+      ],
+      [
+        "mod/cool.png",
+        "cool.png"
+      ]
+    ]
+  },
+  {
+    "game": "totalwarthreekingdoms",
+    "files": [
+      "cool.pack"
+    ],
+    "expect": [
+      [
+        "cool.pack",
+        "cool.pack"
+      ]
+    ]
+  },
+  {
+    "game": "vampirebloodlines",
+    "name": "Skin Pack",
+    "files": [
+      "materials/models/a.vtf",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "materials/models/a.vtf",
+        "materials/models/a.vtf"
+      ],
+      [
+        "readme.txt",
+        "readme.txt"
+      ]
+    ]
+  },
+  {
+    "game": "vampirebloodlines",
+    "name": "Wrapped",
+    "files": [
+      "MyMod/Vampire/cfg/autoexec.cfg"
+    ],
+    "expect": [
+      [
+        "MyMod/Vampire/cfg/autoexec.cfg",
+        "MyMod/Vampire/cfg/autoexec.cfg"
+      ]
+    ]
+  },
+  {
+    "game": "warthunder",
+    "name": "Skin",
+    "files": [
+      "bf109_skin/bf_109_c.dds",
+      "bf109_skin/bf109.blk"
+    ],
+    "expect": [
+      [
+        "bf109_skin/bf_109_c.dds",
+        "bf109_skin/bf_109_c.dds"
+      ],
+      [
+        "bf109_skin/bf109.blk",
+        "bf109_skin/bf109.blk"
+      ]
+    ]
+  },
+  {
+    "game": "warthunder",
+    "name": "Sound Mod",
+    "files": [
+      "crew_dialogs.fsb",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "crew_dialogs.fsb",
+        "[sound] crew_dialogs.fsb"
+      ],
+      [
+        "readme.txt",
+        "[sound] readme.txt"
+      ]
+    ]
+  },
+  {
+    "game": "warthunder",
+    "name": "Sound Mod Nested",
+    "files": [
+      "pack/engines.FSB",
+      "pack/engines.assets.bank"
+    ],
+    "expect": [
+      [
+        "pack/engines.FSB",
+        "[sound] pack/engines.FSB"
+      ],
+      [
+        "pack/engines.assets.bank",
+        "[sound] pack/engines.assets.bank"
+      ]
+    ]
+  },
+  {
+    "game": "witcher",
+    "name": "Textures",
+    "files": [
+      "tex_a.dds",
+      "sub/tex_b.dds"
+    ],
+    "expect": [
+      [
+        "tex_a.dds",
+        "tex_a.dds"
+      ],
+      [
+        "sub/tex_b.dds",
+        "sub/tex_b.dds"
+      ]
+    ]
+  },
+  {
+    "game": "witcher",
+    "name": "User Content",
+    "files": [
+      "mymod/cook.hash",
+      "mymod/data.bif"
+    ],
+    "expect": [
+      [
+        "mymod/cook.hash",
+        "mymod/cook.hash"
+      ],
+      [
+        "mymod/data.bif",
+        "mymod/data.bif"
+      ]
+    ]
+  },
+  {
+    "game": "witcher2",
+    "name": "Cooked",
+    "files": [
+      "base_scripts.dzip",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "base_scripts.dzip",
+        "base_scripts.dzip"
+      ],
+      [
+        "readme.txt",
+        "readme.txt"
+      ]
+    ]
+  },
+  {
+    "game": "witcher2",
+    "name": "User Content",
+    "files": [
+      "mymod/cook.hash",
+      "mymod/pack.dzip"
+    ],
+    "expect": [
+      [
+        "mymod/cook.hash",
+        "[usercontent] mymod/cook.hash"
+      ],
+      [
+        "mymod/pack.dzip",
+        "[usercontent] mymod/pack.dzip"
+      ]
+    ]
+  },
+  {
+    "game": "wolcenlordsofmayhem",
+    "name": "Wrapped",
+    "files": [
+      "MyMod/Umbra/Skills/x.xml",
+      "MyMod/Lib/y.xml",
+      "MyMod/readme.txt"
+    ],
+    "expect": [
+      [
+        "MyMod/Umbra/Skills/x.xml",
+        "Umbra/Skills/x.xml"
+      ],
+      [
+        "MyMod/Lib/y.xml",
+        "Lib/y.xml"
+      ]
+    ]
+  },
+  {
+    "game": "wolcenlordsofmayhem",
+    "name": "Top Level",
+    "files": [
+      "Loot/a.xml",
+      "Objects/b.cgf"
+    ],
+    "expect": [
+      [
+        "Loot/a.xml",
+        "Loot/a.xml"
+      ],
+      [
+        "Objects/b.cgf",
+        "Objects/b.cgf"
+      ]
+    ]
+  },
+  {
+    "game": "wolcenlordsofmayhem",
+    "name": "Unknown",
+    "files": [
+      "stuff/data.pak"
+    ],
+    "expect": [
+      [
+        "stuff/data.pak",
+        "stuff/data.pak"
+      ]
+    ]
+  },
+  {
+    "game": "x4foundations",
+    "name": "Mod",
+    "files": [
+      "coolmod/content.xml",
+      "coolmod/md/script.xml",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "coolmod/content.xml",
+        "coolmod/content.xml"
+      ],
+      [
+        "coolmod/md/script.xml",
+        "coolmod/md/script.xml"
+      ]
+    ]
+  },
+  {
+    "game": "x4foundations",
+    "name": "Wrapped",
+    "files": [
+      "CoolMod-1.0/coolmod/content.xml",
+      "CoolMod-1.0/coolmod/ext_01.cat",
+      "CoolMod-1.0/readme.txt"
+    ],
+    "expect": [
+      [
+        "CoolMod-1.0/coolmod/content.xml",
+        "coolmod/content.xml"
+      ],
+      [
+        "CoolMod-1.0/coolmod/ext_01.cat",
+        "coolmod/ext_01.cat"
+      ]
+    ]
+  },
+  {
+    "game": "xrebirth",
+    "name": "Mod",
+    "files": [
+      "mymod/content.xml",
+      "mymod/ext_01.cat",
+      "mymod/ext_01.dat"
+    ],
+    "expect": [
+      [
+        "mymod/content.xml",
+        "mymod/content.xml"
+      ],
+      [
+        "mymod/ext_01.cat",
+        "mymod/ext_01.cat"
+      ],
+      [
+        "mymod/ext_01.dat",
+        "mymod/ext_01.dat"
+      ]
+    ]
+  },
+  {
+    "game": "xrebirth",
+    "name": "Wrapped",
+    "files": [
+      "wrap/mymod/content.xml",
+      "wrap/mymod/data.cat",
+      "wrap/notes.txt"
+    ],
+    "expect": [
+      [
+        "wrap/mymod/content.xml",
+        "mymod/content.xml"
+      ],
+      [
+        "wrap/mymod/data.cat",
+        "mymod/data.cat"
+      ]
+    ]
+  },
+  {
+    "game": "microsoftflightsimulator",
+    "name": "Livery",
+    "files": [
+      "my-livery/manifest.json",
+      "my-livery/layout.json",
+      "my-livery/SimObjects/Airplanes/x/aircraft.cfg",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "my-livery/manifest.json",
+        "my-livery/manifest.json"
+      ],
+      [
+        "my-livery/layout.json",
+        "my-livery/layout.json"
+      ],
+      [
+        "my-livery/SimObjects/Airplanes/x/aircraft.cfg",
+        "my-livery/SimObjects/Airplanes/x/aircraft.cfg"
+      ]
+    ]
+  },
+  {
+    "game": "microsoftflightsimulator",
+    "name": "Pack",
+    "files": [
+      "Pack/airport-a/manifest.json",
+      "Pack/airport-a/layout.json",
+      "Pack/airport-b/manifest.json",
+      "Pack/airport-b/scenery/b.bgl"
+    ],
+    "expect": [
+      [
+        "Pack/airport-a/manifest.json",
+        "airport-a/manifest.json"
+      ],
+      [
+        "Pack/airport-a/layout.json",
+        "airport-a/layout.json"
+      ],
+      [
+        "Pack/airport-b/manifest.json",
+        "airport-b/manifest.json"
+      ],
+      [
+        "Pack/airport-b/scenery/b.bgl",
+        "airport-b/scenery/b.bgl"
+      ]
+    ]
+  },
+  {
+    "game": "xcom2",
+    "name": "Mod",
+    "files": [
+      "MyMod/MyMod.XComMod",
+      "MyMod/Config/XComGame.ini",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "MyMod/MyMod.XComMod",
+        "MyMod/MyMod.XComMod"
+      ],
+      [
+        "MyMod/Config/XComGame.ini",
+        "MyMod/Config/XComGame.ini"
+      ]
+    ]
+  },
+  {
+    "game": "xcom2",
+    "name": "Two Mods Wrapped",
+    "files": [
+      "Bundle/ModA/ModA.XComMod",
+      "Bundle/ModA/Content/a.upk",
+      "Bundle/ModB/ModB.XComMod"
+    ],
+    "expect": [
+      [
+        "Bundle/ModA/ModA.XComMod",
+        "ModA/ModA.XComMod"
+      ],
+      [
+        "Bundle/ModA/Content/a.upk",
+        "ModA/Content/a.upk"
+      ],
+      [
+        "Bundle/ModB/ModB.XComMod",
+        "ModB/ModB.XComMod"
+      ]
+    ]
+  },
+  {
+    "game": "xcom2-wotc",
+    "name": "Mod",
+    "files": [
+      "MyMod/MyMod.XComMod",
+      "MyMod/Config/XComGame.ini",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "MyMod/MyMod.XComMod",
+        "MyMod/MyMod.XComMod"
+      ],
+      [
+        "MyMod/Config/XComGame.ini",
+        "MyMod/Config/XComGame.ini"
+      ]
+    ]
+  },
+  {
+    "game": "xcom2-wotc",
+    "name": "Two Mods Wrapped",
+    "files": [
+      "Bundle/ModA/ModA.XComMod",
+      "Bundle/ModA/Content/a.upk",
+      "Bundle/ModB/ModB.XComMod"
+    ],
+    "expect": [
+      [
+        "Bundle/ModA/ModA.XComMod",
+        "ModA/ModA.XComMod"
+      ],
+      [
+        "Bundle/ModA/Content/a.upk",
+        "ModA/Content/a.upk"
+      ],
+      [
+        "Bundle/ModB/ModB.XComMod",
+        "ModB/ModB.XComMod"
+      ]
+    ]
+  },
+  {
+    "game": "palworld",
+    "name": "Big Eyes",
+    "files": [
+      "BigEyes/BigEyes_P.pak",
+      "BigEyes/readme.txt"
+    ],
+    "expect": [
+      [
+        "BigEyes/BigEyes_P.pak",
+        "BigEyes_P.pak"
+      ]
+    ]
+  },
+  {
+    "game": "palworld",
+    "name": "Map Unlock",
+    "files": [
+      "Pal/Content/Paks/~mods/Map_P.pak",
+      "Pal/Binaries/Win64/Mods/MapUnlock/Scripts/main.lua",
+      "readme.txt"
+    ],
+    "expect": [
+      [
+        "Pal/Content/Paks/~mods/Map_P.pak",
+        "[root] Pal/Content/Paks/~mods/Map_P.pak"
+      ],
+      [
+        "Pal/Binaries/Win64/Mods/MapUnlock/Scripts/main.lua",
+        "[root] Pal/Binaries/Win64/Mods/MapUnlock/Scripts/main.lua"
+      ]
+    ]
+  },
+  {
+    "game": "palworld",
+    "name": "UE4SS",
+    "files": [
+      "dwmapi.dll",
+      "ue4ss/UE4SS.dll",
+      "ue4ss/UE4SS-settings.ini",
+      "ue4ss/Mods/mods.txt"
+    ],
+    "expect": [
+      [
+        "dwmapi.dll",
+        "[win64] dwmapi.dll"
+      ],
+      [
+        "ue4ss/UE4SS.dll",
+        "[win64] ue4ss/UE4SS.dll"
+      ],
+      [
+        "ue4ss/UE4SS-settings.ini",
+        "[win64] ue4ss/UE4SS-settings.ini"
+      ],
+      [
+        "ue4ss/Mods/mods.txt",
+        "[win64] ue4ss/Mods/mods.txt"
+      ]
+    ]
+  },
+  {
+    "game": "palworld",
+    "name": "Blueprint Mod",
+    "files": [
+      "Mod v2/LogicMods/Cool.pak",
+      "Mod v2/notes.txt"
+    ],
+    "expect": [
+      [
+        "Mod v2/LogicMods/Cool.pak",
+        "[paks] LogicMods/Cool.pak"
+      ]
+    ]
+  },
+  {
+    "game": "palworld",
+    "name": "Fast Travel",
+    "files": [
+      "FastTravel/Scripts/main.lua",
+      "FastTravel/enabled.txt",
+      "how to.txt"
+    ],
+    "expect": [
+      [
+        "FastTravel/Scripts/main.lua",
+        "[win64] Mods/FastTravel/Scripts/main.lua"
+      ],
+      [
+        "FastTravel/enabled.txt",
+        "[win64] Mods/FastTravel/enabled.txt"
+      ]
+    ]
+  },
+  {
+    "game": "palworld",
+    "name": "Skins",
+    "files": [
+      "~mods/Skins/a_P.pak",
+      "~mods/b_P.pak"
+    ],
+    "expect": [
+      [
+        "~mods/Skins/a_P.pak",
+        "Skins/a_P.pak"
+      ],
+      [
+        "~mods/b_P.pak",
+        "b_P.pak"
+      ]
+    ]
+  }
+]

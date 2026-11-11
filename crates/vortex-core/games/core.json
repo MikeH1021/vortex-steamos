@@ -1,0 +1,409 @@
+[
+  {
+    "id": "skyrimse",
+    "name": "Skyrim Special Edition",
+    "steam": [
+      489830
+    ],
+    "executable": "SkyrimSE.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Data"
+    },
+    "nexus_domain": "skyrimspecialedition",
+    "kind": "bethesda",
+    "plugins": {
+      "format": "asterisk",
+      "app_dir": "Skyrim Special Edition",
+      "native": [
+        "skyrim.esm",
+        "update.esm",
+        "dawnguard.esm",
+        "hearthfires.esm",
+        "dragonborn.esm",
+        "ccBGSSSE002-ExoticArrows.esl",
+        "ccBGSSSE003-Zombies.esl",
+        "ccBGSSSE004-RuinsEdge.esl",
+        "ccBGSSSE006-StendarsHammer.esl",
+        "ccBGSSSE007-Chrysamere.esl",
+        "ccBGSSSE010-PetDwarvenArmoredMudcrab.esl",
+        "ccBGSSSE014-SpellPack01.esl",
+        "ccBGSSSE019-StaffofSheogorath.esl",
+        "ccBGSSSE021-LordsMail.esl",
+        "ccMTYSSE001-KnightsoftheNine.esl",
+        "ccQDRSSE001-SurvivalMode.esl",
+        "ccTWBSSE001-PuzzleDungeon.esm",
+        "ccEEJSSE001-Hstead.esl"
+      ],
+      "ccc": "Skyrim.ccc",
+      "extensions": [
+        ".esm",
+        ".esp",
+        ".esl"
+      ]
+    },
+    "extender": {
+      "name": "SKSE64",
+      "loader": "skse64_loader.exe"
+    }
+  },
+  {
+    "id": "skyrim",
+    "name": "Skyrim",
+    "steam": [
+      72850
+    ],
+    "executable": "TESV.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Data"
+    },
+    "nexus_domain": "skyrim",
+    "kind": "bethesda",
+    "plugins": {
+      "format": "original",
+      "app_dir": "Skyrim",
+      "native": [
+        "skyrim.esm",
+        "update.esm"
+      ],
+      "ccc": null,
+      "extensions": [
+        ".esm",
+        ".esp"
+      ]
+    },
+    "extender": {
+      "name": "SKSE",
+      "loader": "skse_loader.exe"
+    }
+  },
+  {
+    "id": "skyrimvr",
+    "name": "Skyrim VR",
+    "steam": [
+      611670
+    ],
+    "executable": "SkyrimVR.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Data"
+    },
+    "nexus_domain": "skyrimspecialedition",
+    "kind": "bethesda",
+    "plugins": {
+      "format": "asterisk",
+      "app_dir": "Skyrim VR",
+      "native": [
+        "skyrim.esm",
+        "update.esm",
+        "dawnguard.esm",
+        "hearthfires.esm",
+        "dragonborn.esm",
+        "skyrimvr.esm"
+      ],
+      "ccc": null,
+      "extensions": [
+        ".esm",
+        ".esp"
+      ]
+    },
+    "extender": {
+      "name": "SKSEVR",
+      "loader": "sksevr_loader.exe"
+    }
+  },
+  {
+    "id": "enderal",
+    "name": "Enderal",
+    "steam": [
+      933480
+    ],
+    "executable": "TESV.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Data"
+    },
+    "nexus_domain": "enderal",
+    "kind": "bethesda",
+    "plugins": {
+      "format": "original",
+      "app_dir": "Enderal",
+      "native": [
+        "skyrim.esm"
+      ],
+      "ccc": null,
+      "extensions": [
+        ".esm",
+        ".esp"
+      ]
+    },
+    "extender": {
+      "name": "SKSE",
+      "loader": "skse_loader.exe"
+    }
+  },
+  {
+    "id": "starfield",
+    "name": "Starfield",
+    "steam": [
+      1716740
+    ],
+    "executable": "Starfield.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Data"
+    },
+    "nexus_domain": "starfield",
+    "kind": "bethesda",
+    "plugins": {
+      "format": "asterisk",
+      "app_dir": "Starfield",
+      "native": [
+        "starfield.esm",
+        "constellation.esm",
+        "oldmars.esm",
+        "shatteredspace.esm",
+        "blueprintships-starfield.esm",
+        "blueprintships-sfbgs050.esm",
+        "sfbgs003.esm",
+        "sfbgs004.esm",
+        "sfbgs005.esm",
+        "sfbgs006.esm",
+        "sfbgs007.esm",
+        "sfbgs008.esm",
+        "sfbgs00d.esm",
+        "sfbgs047.esm",
+        "sfbgs050.esm"
+      ],
+      "ccc": "Starfield.ccc",
+      "extensions": [
+        ".esm",
+        ".esp",
+        ".esl"
+      ]
+    },
+    "extender": {
+      "name": "SFSE",
+      "loader": "sfse_loader.exe"
+    },
+    "notes": "Mods made of loose files, such as textures, only load when StarfieldCustom.ini in Documents/My Games/Starfield has these two lines under [Archive]: bInvalidateOlderFiles=1 and sResourceDataDirsFinal= with nothing after the equals sign. If that folder has a Data folder of its own, the game reads loose files from there first. The game's Creations menu changes the same plugin list this app writes."
+  },
+  {
+    "id": "fallout4",
+    "name": "Fallout 4",
+    "steam": [
+      377160
+    ],
+    "executable": "Fallout4.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Data"
+    },
+    "nexus_domain": "fallout4",
+    "kind": "bethesda",
+    "plugins": {
+      "format": "asterisk",
+      "app_dir": "Fallout4",
+      "native": [
+        "fallout4.esm",
+        "dlcrobot.esm",
+        "dlcworkshop01.esm",
+        "dlccoast.esm",
+        "dlcworkshop02.esm",
+        "dlcworkshop03.esm",
+        "dlcnukaworld.esm",
+        "dlcultrahighresolution.esm"
+      ],
+      "ccc": "Fallout4.ccc",
+      "extensions": [
+        ".esm",
+        ".esp",
+        ".esl"
+      ]
+    },
+    "extender": {
+      "name": "F4SE",
+      "loader": "f4se_loader.exe"
+    }
+  },
+  {
+    "id": "fallout4vr",
+    "name": "Fallout 4 VR",
+    "steam": [
+      611660
+    ],
+    "executable": "Fallout4VR.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Data"
+    },
+    "nexus_domain": "fallout4",
+    "kind": "bethesda",
+    "plugins": {
+      "format": "asterisk",
+      "app_dir": "Fallout4VR",
+      "native": [
+        "fallout4.esm",
+        "fallout4_vr.esm"
+      ],
+      "ccc": null,
+      "extensions": [
+        ".esm",
+        ".esp"
+      ]
+    },
+    "extender": {
+      "name": "F4SEVR",
+      "loader": "f4sevr_loader.exe"
+    }
+  },
+  {
+    "id": "falloutnv",
+    "name": "Fallout: New Vegas",
+    "steam": [
+      22380
+    ],
+    "executable": "FalloutNV.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Data"
+    },
+    "nexus_domain": "newvegas",
+    "kind": "bethesda",
+    "plugins": {
+      "format": "original",
+      "app_dir": "FalloutNV",
+      "native": [
+        "falloutnv.esm"
+      ],
+      "ccc": null,
+      "extensions": [
+        ".esm",
+        ".esp"
+      ]
+    },
+    "extender": {
+      "name": "NVSE",
+      "loader": "nvse_loader.exe"
+    }
+  },
+  {
+    "id": "fallout3",
+    "name": "Fallout 3",
+    "steam": [
+      22300,
+      22370
+    ],
+    "executable": "Fallout3.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Data"
+    },
+    "nexus_domain": "fallout3",
+    "kind": "bethesda",
+    "plugins": {
+      "format": "original",
+      "app_dir": "Fallout3",
+      "native": [
+        "fallout3.esm"
+      ],
+      "ccc": null,
+      "extensions": [
+        ".esm",
+        ".esp"
+      ]
+    },
+    "extender": {
+      "name": "FOSE",
+      "loader": "fose_loader.exe"
+    }
+  },
+  {
+    "id": "oblivion",
+    "name": "Oblivion",
+    "steam": [
+      22330
+    ],
+    "executable": "Oblivion.exe",
+    "mod_path": {
+      "base": "game",
+      "path": "Data"
+    },
+    "nexus_domain": "oblivion",
+    "kind": "bethesda",
+    "plugins": {
+      "format": "original",
+      "app_dir": "Oblivion",
+      "native": [
+        "oblivion.esm"
+      ],
+      "ccc": null,
+      "extensions": [
+        ".esm",
+        ".esp"
+      ]
+    },
+    "extender": {
+      "name": "OBSE",
+      "loader": "obse_loader.exe"
+    }
+  },
+  {
+    "id": "witcher3",
+    "name": "The Witcher 3: Wild Hunt",
+    "steam": [
+      292030,
+      499450
+    ],
+    "executable": "bin/x64/witcher3.exe",
+    "mod_path": {
+      "base": "game",
+      "path": ""
+    },
+    "nexus_domain": "witcher3",
+    "kind": "witcher3",
+    "notes": "Mods load in alphabetical order of their folder names. Two mods that change the same script still need the Script Merger tool, which this app does not run."
+  },
+  {
+    "id": "cyberpunk2077",
+    "name": "Cyberpunk 2077",
+    "steam": [
+      1091500
+    ],
+    "executable": "bin/x64/Cyberpunk2077.exe",
+    "mod_path": {
+      "base": "game",
+      "path": ""
+    },
+    "nexus_domain": "cyberpunk2077",
+    "kind": "cyberpunk2077",
+    "notes": "Framework mods (Cyber Engine Tweaks, RED4ext) need this in the game's Steam launch options: WINEDLLOVERRIDES=\"winmm,version=n,b\" %command%. REDmods under mods/ load only when REDmod is turned on in the game's launcher settings."
+  },
+  {
+    "id": "stardewvalley",
+    "name": "Stardew Valley",
+    "steam": [
+      413150
+    ],
+    "executable": "Stardew Valley.exe",
+    "native_executable": "StardewValley",
+    "mod_path": {
+      "base": "game",
+      "path": "Mods"
+    },
+    "nexus_domain": "stardewvalley",
+    "kind": "stardew",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
+    "extender": {
+      "name": "SMAPI",
+      "loader": "StardewModdingAPI"
+    },
+    "notes": "Mods need SMAPI. Download SMAPI from Nexus Mods like any mod and this app installs it. Then set the game's Steam launch options to the full path of StardewModdingAPI in the game folder, in quotes, followed by %command%."
+  }
+]

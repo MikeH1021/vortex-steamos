@@ -1,0 +1,18 @@
+[package]
+name = "vortex-core"
+version = "0.2.0"
+edition = "2021"
+license = "GPL-3.0-or-later"
+publish = false
+description = "Steam discovery, Proton prefixes, mod deployment, and Nexus downloads for Vortex on SteamOS"
+
+[dependencies]
+roxmltree = "0.21.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1.0.154"
+sevenz-rust2 = "0.25.0"
+ureq = { version = "2.12.1", default-features = false, features = ["tls"] }
+zip = "9.4.2"
+
+[dev-dependencies]
+tempfile = "3.27.0"
