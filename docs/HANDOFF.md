@@ -73,7 +73,7 @@ ui/                    Godot 4 shell. scripts/shell.gd draws everything, scripts
                        runs vortex-cli on a worker thread
 packaging/             launcher script, desktop entry, install.sh, uninstall.sh
 scripts/               build-release.sh, dev-sandbox.sh, import-vortex-games.cjs, ui-smoke.gd
-.github/workflows/     ci.yml (fmt, clippy, tests, shellcheck), release.yml (Linux archive)
+docs/workflows/        ci.yml and release.yml, parked. See the README there for how to turn them on
 docs/porting/          the brief the game ports were written from, and the per-game report
 ```
 
@@ -126,8 +126,8 @@ Not ported, and why: The Sims 4, World of Tanks, Neverwinter Nights (original) a
 
 In rough order. Each of these is written and untested.
 
-1. **Build.** `scripts/build-release.sh` on x86_64 Linux, or push a `v*` tag and let `release.yml` do it. Check the Godot export preset works with real export templates and that the musl build of `vortex-cli` links.
-2. **CI.** `ci.yml` has never run. The deploy tests depend on a case-sensitive file system, which macOS does not have, so Linux is where they mean something.
+1. **Build.** `scripts/build-release.sh` on x86_64 Linux. The GitHub workflows that would do this are parked in `docs/workflows/` and not active. Check the Godot export preset works with real export templates and that the musl build of `vortex-cli` links.
+2. **CI.** `ci.yml` has never run, and is parked with the release workflow. The deploy tests depend on a case-sensitive file system, which macOS does not have, so Linux is where they mean something.
 3. **Install.** `install.sh` on SteamOS and on Bazzite: files land in `~/.local/share/vortex-steamos`, `xdg-mime` registers the `nxm` handler, `steamos-add-to-steam` adds the shortcut.
 4. **Discovery** against a real Steam library, including a game on an SD card and a game whose Proton prefix is in a different library.
 5. **A real mod, end to end,** for Skyrim Special Edition: sign in, download, install, deploy, check `Plugins.txt` in the prefix, launch the game.

@@ -1,0 +1,51 @@
+name: Release
+
+# Push a tag such as v0.2.0 to build the Linux archive and attach it to a
+# GitHub release. "Run workflow" builds it as a downloadable artifact instead.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: "4.7.2"
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-musl
+      - uses: Swatinem/rust-cache@v2
+      - name: Install the musl C compiler
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+      - run: cargo test --locked
+      - name: Install Godot and its export templates
+        run: |
+          base="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable"
+          curl -fsSL -o godot.zip "$base/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          curl -fsSL -o templates.tpz "$base/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot"
+          templates="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$templates"
+          unzip -q -j templates.tpz 'templates/linux_*x86_64' 'templates/version.txt' -d "$templates"
+          rm godot.zip templates.tpz
+      - name: Build the archive
+        run: GODOT="$RUNNER_TEMP/godot" scripts/build-release.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vortex-steamos-linux-x86_64
+          path: dist/*.tar.gz
+          if-no-files-found: error
+      - name: Publish the release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.tar.gz
+          generate_release_notes: true

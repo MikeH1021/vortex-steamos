@@ -188,7 +188,7 @@ Every ported game has example archives in `games/cases.json`: a list of files, a
 
 ### Build a release
 
-Release archives are built on Linux. Push a tag such as `v0.2.0` and `.github/workflows/release.yml` builds the archive and attaches it to a GitHub release. To build one yourself on x86_64 Linux, with Godot's Linux export templates installed:
+Release archives are built on x86_64 Linux, with Godot's Linux export templates installed:
 
 ```sh
 rustup target add x86_64-unknown-linux-musl
@@ -196,6 +196,8 @@ scripts/build-release.sh
 ```
 
 `vortex-cli` is linked statically so one binary runs on both SteamOS and Bazzite.
+
+Workflows that run the tests and build this archive on GitHub are in `docs/workflows/`, not yet switched on. Its README says how.
 
 ### The command line
 
