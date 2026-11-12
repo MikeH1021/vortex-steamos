@@ -2,6 +2,8 @@
 
 An open source, controller-first mod manager for SteamOS and Bazzite. It runs as a native Linux app in Game Mode and on the desktop. It finds your Steam games, downloads mods from Nexus Mods, installs them, and keeps the game's plugin list in order. The games themselves stay Windows builds and run through Proton.
 
+> **Untested on real hardware.** Everything here was written and checked on a Mac: the automated tests pass, and the app has been run against made-up Steam libraries. It has not yet been run on SteamOS, Bazzite, or any Linux machine, and no Linux build has been produced. Expect things to break. Back up your game and save folders before letting it touch them. This notice will come down once the checklist in [docs/HANDOFF.md](docs/HANDOFF.md) has been worked through on a device.
+
 This is an independent project. It is not made or endorsed by Nexus Mods. The `Vortex/` directory next to this one is the upstream Nexus Mods Vortex source, kept as a behavior reference. This app does not link against it or modify it.
 
 ## Supported games
