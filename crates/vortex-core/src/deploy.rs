@@ -222,7 +222,17 @@ pub(crate) fn write_atomic(path: &Path, text: &str) -> io::Result<()> {
         .map(|name| name.to_string_lossy().to_string())
         .unwrap_or_else(|| "file".to_string());
     let temp = path.with_file_name(format!(".{name}.tmp"));
-    fs::write(&temp, text)?;
+    let written = fs::File::create(&temp).and_then(|mut file| {
+        use std::io::Write;
+        file.write_all(text.as_bytes())?;
+        // Renaming before the data is on disk can leave an empty file behind
+        // after a power cut.
+        file.sync_all()
+    });
+    if let Err(err) = written {
+        let _ = fs::remove_file(&temp);
+        return Err(err);
+    }
     match fs::rename(&temp, path) {
         Ok(()) => Ok(()),
         Err(err) => {
@@ -546,27 +556,45 @@ fn deploy_root(
             continue;
         };
         let dest = data.join(&relative);
-        let mut backup = false;
-        let present = fs::symlink_metadata(&dest).is_ok();
-        if present && is_our_link(&dest, &plan.source) {
+        // A backup beside one of our links is the game's file we moved aside,
+        // whether or not the record of doing so survived. Going by what is on
+        // disk keeps the original restorable after a lost or stale manifest.
+        let saved = backup_path(&dest);
+        let mut backup = replace_existing && fs::symlink_metadata(&saved).is_ok();
+        let present = fs::symlink_metadata(&dest).ok();
+        if present.is_some() && is_our_link(&dest, &plan.source) {
             report.unchanged += 1;
         } else {
-            if present {
+            if let Some(found) = &present {
                 // The game's own file. Step around it, or move it aside.
-                let saved = backup_path(&dest);
-                let movable =
-                    replace_existing && dest.is_file() && fs::symlink_metadata(&saved).is_err();
-                if !movable {
+                if !(replace_existing && dest.is_file()) {
                     report.skipped.push(relative);
                     continue;
                 }
+                if backup {
+                    // A plain file where our link used to be: Steam updated or
+                    // repaired the game. That file is the original now, and
+                    // the older backup is out of date. Anything that may still
+                    // be a link of ours is left alone.
+                    if found.file_type().is_symlink() || link_count(found) != 1 {
+                        report.skipped.push(relative);
+                        continue;
+                    }
+                    fs::remove_file(&saved)?;
+                }
                 fs::rename(&dest, &saved)?;
                 backup = true;
+            } else if let Some(parent) = Path::new(&relative).parent() {
+                // A file where a mod wants a folder (or the other way round)
+                // costs that one file, not the whole deploy.
+                if create_dirs(data, parent, &mut dirs).is_err() {
+                    report.skipped.push(relative);
+                    continue;
+                }
             }
-            if let Some(parent) = Path::new(&relative).parent() {
-                create_dirs(data, parent, &mut dirs)?;
-            }
-            place_link(method, &plan.source, &dest)?;
+            place_link(method, &plan.source, &dest).map_err(|err| {
+                ModError::new(format!("could not place {}: {err}", dest.display()))
+            })?;
             report.linked += 1;
         }
         files.push(DeployedFile {
@@ -843,7 +871,29 @@ fn load_manifest(staging: &Path) -> Result<DeploymentManifest, ModError> {
     if !path.is_file() {
         return Ok(DeploymentManifest::default());
     }
-    Ok(serde_json::from_str(&fs::read_to_string(path)?)?)
+    match serde_json::from_str(&fs::read_to_string(&path)?) {
+        Ok(manifest) => Ok(manifest),
+        Err(_) => {
+            // A cut-off record (power loss, full disk) must not lock the
+            // player out of their mods. Links still in place are recognised
+            // again by what they point at.
+            let _ = fs::rename(&path, staging.join("deployment.json.corrupt"));
+            Ok(DeploymentManifest::default())
+        }
+    }
+}
+
+fn link_count(metadata: &fs::Metadata) -> u64 {
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::MetadataExt;
+        metadata.nlink()
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = metadata;
+        1
+    }
 }
 
 fn save_manifest(staging: &Path, manifest: &DeploymentManifest) -> Result<(), ModError> {
@@ -1041,6 +1091,67 @@ mod tests {
         purge(&staging, &roots).unwrap();
         assert_eq!(fs::read(data.join("rom/main.arc")).unwrap(), b"shipped");
         assert_eq!(dir_names(&data.join("rom")), ["main.arc"]);
+    }
+
+    #[test]
+    fn a_lost_record_does_not_lose_the_games_file() {
+        let root = tempfile::tempdir().unwrap();
+        let staging = root.path().join("staging");
+        let data = root.path().join("game");
+        fs::create_dir_all(&data).unwrap();
+        fs::write(data.join("inputs.xml"), b"shipped").unwrap();
+        save_mod(&staging, "a", "inputs.xml", b"from-a");
+        save_mods(&staging, &[entry("a", true)]).unwrap();
+        let mut roots = DeployRoots::single(&data);
+        roots.replace_existing = true;
+        deploy(&staging, &roots).unwrap();
+
+        // The record is gone or cut short. The backup on disk still counts.
+        fs::write(staging.join("deployment.json"), b"").unwrap();
+        deploy(&staging, &roots).unwrap();
+        set_enabled(&staging, "a", false).unwrap();
+        deploy(&staging, &roots).unwrap();
+        assert_eq!(fs::read(data.join("inputs.xml")).unwrap(), b"shipped");
+        assert_eq!(dir_names(&data), ["inputs.xml"]);
+    }
+
+    #[test]
+    fn a_game_update_becomes_the_new_original() {
+        let root = tempfile::tempdir().unwrap();
+        let staging = root.path().join("staging");
+        let data = root.path().join("game");
+        fs::create_dir_all(&data).unwrap();
+        fs::write(data.join("inputs.xml"), b"shipped").unwrap();
+        save_mod(&staging, "a", "inputs.xml", b"from-a");
+        save_mods(&staging, &[entry("a", true)]).unwrap();
+        let mut roots = DeployRoots::single(&data);
+        roots.replace_existing = true;
+        deploy(&staging, &roots).unwrap();
+
+        // Steam writes a new file over our link.
+        fs::remove_file(data.join("inputs.xml")).unwrap();
+        fs::write(data.join("inputs.xml"), b"updated").unwrap();
+        let report = deploy(&staging, &roots).unwrap();
+        assert!(report.skipped.is_empty());
+        assert_eq!(fs::read(data.join("inputs.xml")).unwrap(), b"from-a");
+        purge(&staging, &roots).unwrap();
+        assert_eq!(fs::read(data.join("inputs.xml")).unwrap(), b"updated");
+        assert_eq!(dir_names(&data), ["inputs.xml"]);
+    }
+
+    #[test]
+    fn a_file_where_a_folder_should_be_costs_only_that_file() {
+        let root = tempfile::tempdir().unwrap();
+        let staging = root.path().join("staging");
+        let data = root.path().join("Data");
+        fs::create_dir_all(&data).unwrap();
+        save_mod(&staging, "a", "docs", b"a file");
+        save_mod(&staging, "b", "docs/readme.txt", b"in a folder");
+        save_mod(&staging, "b", "B.esp", b"plugin");
+        save_mods(&staging, &[entry("a", true), entry("b", true)]).unwrap();
+        let report = deploy(&staging, &DeployRoots::single(&data)).unwrap();
+        assert_eq!(report.skipped, ["docs/readme.txt"]);
+        assert!(data.join("B.esp").is_file());
     }
 
     #[test]

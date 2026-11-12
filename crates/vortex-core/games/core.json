@@ -12,6 +12,12 @@
     },
     "nexus_domain": "skyrimspecialedition",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "asterisk",
       "app_dir": "Skyrim Special Edition",
@@ -60,6 +66,12 @@
     },
     "nexus_domain": "skyrim",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "original",
       "app_dir": "Skyrim",
@@ -91,6 +103,12 @@
     },
     "nexus_domain": "skyrimspecialedition",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "asterisk",
       "app_dir": "Skyrim VR",
@@ -126,6 +144,12 @@
     },
     "nexus_domain": "enderal",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "original",
       "app_dir": "Enderal",
@@ -156,6 +180,12 @@
     },
     "nexus_domain": "starfield",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "asterisk",
       "app_dir": "Starfield",
@@ -202,6 +232,12 @@
     },
     "nexus_domain": "fallout4",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "asterisk",
       "app_dir": "Fallout4",
@@ -240,6 +276,12 @@
     },
     "nexus_domain": "fallout4",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "asterisk",
       "app_dir": "Fallout4VR",
@@ -271,6 +313,12 @@
     },
     "nexus_domain": "newvegas",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "original",
       "app_dir": "FalloutNV",
@@ -302,6 +350,12 @@
     },
     "nexus_domain": "fallout3",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "original",
       "app_dir": "Fallout3",
@@ -332,6 +386,12 @@
     },
     "nexus_domain": "oblivion",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "original",
       "app_dir": "Oblivion",
@@ -357,6 +417,9 @@
       499450
     ],
     "executable": "bin/x64/witcher3.exe",
+    "other_executables": [
+      "bin/x64_dx12/witcher3.exe"
+    ],
     "mod_path": {
       "base": "game",
       "path": ""
