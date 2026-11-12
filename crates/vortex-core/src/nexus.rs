@@ -1051,7 +1051,9 @@ fn normalize_key(raw: &str) -> Result<String, NexusError> {
         || key.len() > 200
         || !key
             .chars()
-            .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
+            // Nexus keys are base64 pieces joined by "--", so they carry
+            // '+', '/', and '=' as well as letters and digits.
+            .all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '_' | '+' | '/' | '='))
     {
         return Err(message("That file does not look like a Nexus API key."));
     }
@@ -1474,6 +1476,14 @@ mod tests {
         .unwrap_err();
         assert!(err.to_string().contains("https"));
         assert_eq!(transport.downloads.get(), 0);
+    }
+
+    #[test]
+    fn a_key_in_the_shape_nexus_issues_is_accepted() {
+        let key = "abCD12/efGH34+ijKL56=--mnOP78/qrST90--uvWX12yzAB34==";
+        assert_eq!(normalize_key(&format!("  {key}\n")).unwrap(), key);
+        assert!(normalize_key("two words").is_err());
+        assert!(normalize_key("key;with$shell&chars").is_err());
     }
 
     #[test]
