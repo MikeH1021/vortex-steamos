@@ -432,7 +432,10 @@ fn install_prepared(
             package = picked;
             may_link = true;
         } else if rules.kind == Kind::Bethesda {
-            copy_loose(&content_root(&package_root(&raw)), &dest, may_link)?;
+            let package = package_root(&raw);
+            let content = content_root(&package);
+            copy_loose(&content, &dest, may_link)?;
+            stage_game_folder_files(&package, &content, &dest, may_link)?;
             return Ok(notes);
         }
         let listing = file_list(&package)?;
@@ -790,6 +793,42 @@ fn copy_loose(source: &Path, dest: &Path, may_link: bool) -> Result<(), ModError
             }
         }
         copy_file(&from, &to)?;
+    }
+    Ok(())
+}
+
+/// Programs and libraries a Bethesda mod ships for the game folder itself:
+/// a script extender's loader, an ENB or engine-fix DLL. The game never reads
+/// these from `Data`, so they are staged for the game folder.
+const GAME_FOLDER_ENDINGS: &[&str] = &[".exe", ".dll", ".asi"];
+
+fn stage_game_folder_files(
+    package: &Path,
+    content: &Path,
+    dest: &Path,
+    may_link: bool,
+) -> Result<(), ModError> {
+    let Ok(entries) = fs::read_dir(package) else {
+        return Ok(());
+    };
+    let root = dest.join(deploy::TARGETS_DIR).join("root");
+    for entry in entries.flatten() {
+        let name = entry.file_name().to_string_lossy().to_string();
+        let lower = name.to_lowercase();
+        let path = entry.path();
+        if !path.is_file() || !GAME_FOLDER_ENDINGS.iter().any(|end| lower.ends_with(end)) {
+            continue;
+        }
+        fs::create_dir_all(&root)?;
+        let to = root.join(&name);
+        if !(may_link && fs::hard_link(&path, &to).is_ok()) {
+            copy_file(&path, &to)?;
+        }
+        // With no `Data` folder in the archive, the same file was just laid
+        // out for `Data` as well. It does not belong there.
+        if content == package {
+            let _ = fs::remove_file(dest.join(&name));
+        }
     }
     Ok(())
 }
@@ -1538,6 +1577,52 @@ mod tests {
         );
         assert!(!staging.join("mods/campfire/full.txt").exists());
         assert!(!incoming.join("Campfire.zip").exists());
+    }
+
+    #[test]
+    fn a_script_extender_is_staged_for_the_game_folder() {
+        let temp = tempfile::tempdir().unwrap();
+        let staging = temp.path().join("staging");
+        let archive = temp.path().join("skse_1_07_03.zip");
+        write_zip(
+            &archive,
+            &[
+                ("skse_1_07_03/skse_loader.exe", b"loader"),
+                ("skse_1_07_03/skse_1_9_32.dll", b"dll"),
+                ("skse_1_07_03/skse_readme.txt", b"docs"),
+                ("skse_1_07_03/src/skse/main.cpp", b"source"),
+                ("skse_1_07_03/Data/Scripts/actor.pex", b"script"),
+            ],
+        );
+        let report = install_with(
+            &staging,
+            &archive,
+            &InstalledFiles::empty(),
+            &[],
+            &InstallRules::bethesda(),
+        )
+        .unwrap();
+        let staged = staging.join("mods").join(&report.installed.id);
+        assert!(staged.join("Scripts/actor.pex").is_file());
+        assert!(staged.join(".targets/root/skse_loader.exe").is_file());
+        assert!(staged.join(".targets/root/skse_1_9_32.dll").is_file());
+        assert!(!staged.join(".targets/root/skse_readme.txt").exists());
+        assert!(!staged.join("skse_loader.exe").exists());
+
+        // An archive of nothing but libraries has no `Data` folder to go by.
+        let fixes = temp.path().join("EngineFixes.zip");
+        write_zip(&fixes, &[("d3dx9_42.dll", b"a"), ("tbb.dll", b"b")]);
+        let report = install_with(
+            &staging,
+            &fixes,
+            &InstalledFiles::empty(),
+            &[],
+            &InstallRules::bethesda(),
+        )
+        .unwrap();
+        let staged = staging.join("mods").join(&report.installed.id);
+        assert!(staged.join(".targets/root/tbb.dll").is_file());
+        assert!(!staged.join("tbb.dll").exists());
     }
 
     #[test]

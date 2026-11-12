@@ -7,10 +7,10 @@ config_version=5
 
 config/name="Vortex for SteamOS"
 config/description="Controller-first mod manager for SteamOS and Bazzite."
-config/version="0.2.0"
+config/version="0.2.1"
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="res://icon.png"
 
 [display]
 

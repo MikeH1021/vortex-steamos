@@ -622,11 +622,9 @@ fn evaluate(
             packed.extend(pattern.files.iter().cloned());
         }
     }
-    packed.sort_by(|left, right| {
-        left.priority
-            .cmp(&right.priority)
-            .then_with(|| left.source.cmp(&right.source))
-    });
+    // Stable: at the same priority, what the installer lists later is copied
+    // later and wins, so a chosen option overrides the required files.
+    packed.sort_by_key(|file| file.priority);
     let needs_choices = steps
         .iter()
         .filter(|step| step.visible)

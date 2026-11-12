@@ -179,6 +179,9 @@ pub struct GameDef {
     pub steam: Vec<u32>,
     /// The Windows program, relative to the install folder.
     pub executable: String,
+    /// Other places the Windows program can be, for editions that moved it.
+    #[serde(default)]
+    pub other_executables: Vec<String>,
     /// The program of the game's own Linux build, when it has one.
     #[serde(default)]
     pub native_executable: Option<String>,

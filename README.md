@@ -2,9 +2,9 @@
 
 An open source, controller-first mod manager for SteamOS and Bazzite. It runs as a native Linux app in Game Mode and on the desktop. It finds your Steam games, downloads mods from Nexus Mods, installs them, and keeps the game's plugin list in order. The games themselves stay Windows builds and run through Proton.
 
-> **Untested on real hardware.** Everything here was written and checked on a Mac: the automated tests pass, and the app has been run against made-up Steam libraries. It has not yet been run on SteamOS, Bazzite, or any Linux machine, and no Linux build has been produced. Expect things to break. Back up your game and save folders before letting it touch them. This notice will come down once the checklist in [docs/HANDOFF.md](docs/HANDOFF.md) has been worked through on a device.
+> **Early days.** The app has been built and run on one Bazzite desktop: it found a real Steam library, signed in to Nexus Mods, and downloaded, installed, and deployed mods for Skyrim from both the in-app search and a Mod Manager Download link. It has not yet been run on a Steam Deck, on SteamOS itself, or in Game Mode, and most of the supported games have never had a real mod put through them. Expect things to break. Back up your game and save folders before letting it touch them. This notice will come down once the checklist in [docs/HANDOFF.md](docs/HANDOFF.md) has been worked through on a device.
 
-This is an independent project. It is not made or endorsed by Nexus Mods. The `Vortex/` directory next to this one is the upstream Nexus Mods Vortex source, kept as a behavior reference. This app does not link against it or modify it.
+This is an independent project. It is not made or endorsed by Nexus Mods. The tornado icon is the Vortex icon from the upstream Vortex source, which is published under the GPL-3.0; the name and logo belong to Nexus Mods. The `Vortex/` directory next to this one is the upstream Nexus Mods Vortex source, kept as a behavior reference. This app does not link against it or modify it.
 
 ## Supported games
 
@@ -44,7 +44,7 @@ cd vortex-steamos-*-linux-x86_64
 ./install.sh
 ```
 
-Everything goes into your home folder (`~/.local/share/vortex-steamos`). Nothing needs root and nothing touches the read-only system image, so the app survives system updates. The installer also adds the app to your Steam library, so it appears under Non-Steam in Game Mode and in Big Picture. Pass `--no-steam` to skip that.
+Everything goes into your home folder (`~/.local/share/vortex-steamos`). Nothing needs root and nothing touches the read-only system image, so the app survives system updates. The installer also adds the app to your Steam library, with cover art and an icon, so it appears under Non-Steam in Game Mode and in Big Picture. Restart Steam to see the artwork. Pass `--no-steam` to skip that.
 
 The installer also makes the app the handler for `nxm://` links. Those are the links behind the **Mod Manager Download** button on nexusmods.com. Pass `--no-links` to skip that.
 
@@ -99,11 +99,13 @@ Turning a mod off takes its files out of the game folder and keeps the mod insta
 - Windows does not care about letter case and Linux does. A mod that ships `textures/` is merged into the game's existing `Textures/`, and `Plugins.txt` is written under whichever spelling the game already created. Without this a game silently ignores half of a mod.
 - Archives are unpacked next to the staging folder, not in `/tmp`. On SteamOS `/tmp` is memory, and a texture pack does not fit there.
 - Plugin lists are written the way each game expects. Special Edition and Fallout 4 use the `*Plugin.esp` format and leave base masters out. The older games list enabled plugins and take their order from file timestamps.
-- `.rar` archives are unpacked with `bsdtar`, `7z`, or `unrar` from the system. SteamOS and Bazzite ship `bsdtar`.
+- `.rar` archives are unpacked with `bsdtar`, `7z`, or `unrar` from the system, whichever is there. Bazzite ships `7z` and `unrar`.
+- A script extender or other mod that ships programs and libraries for the game folder itself (SKSE's loader, an engine-fix DLL) has those files placed next to the game's own program, and the rest in `Data`.
 
 ## What it does not do yet
 
-- For the Bethesda games, mods that install outside `Data`, such as script extenders (SKSE, F4SE) and ENB. Install those by hand into the game folder.
+- Starting a script extender. SKSE, F4SE, and the like are installed into the game folder, but Steam still starts the game's own program. Pointing Steam at the extender's loader is up to you for now.
+- ENB and other mods that put whole folders, or files other than `.exe`, `.dll`, and `.asi`, into the game folder of a Bethesda game. Install those by hand.
 - Load order files, file merging, and helper tools for the games ported from Vortex. Baldur's Gate 3 mods, for one, are installed here and then switched on in the game's own mod manager.
 - Games Vortex only finds through the Windows registry or another store, such as The Sims 4, World of Tanks, and Halo: The Master Chief Collection.
 - Nexus Collections.
@@ -197,7 +199,14 @@ rustup target add x86_64-unknown-linux-musl
 scripts/build-release.sh
 ```
 
-`vortex-cli` is linked statically so one binary runs on both SteamOS and Bazzite.
+`vortex-cli` is linked statically so one binary runs on both SteamOS and Bazzite. That needs a musl C compiler. On a system without one, such as Bazzite, build the binary in a container and hand it to the script:
+
+```sh
+podman run --rm -v "$PWD":/src:Z -w /src -e CARGO_TARGET_DIR=/src/target/container \
+    docker.io/library/rust:alpine sh -c \
+    'apk add --no-cache musl-dev && cargo build --release --locked --target x86_64-unknown-linux-musl -p vortex-cli'
+VORTEX_CLI_BIN=target/container/x86_64-unknown-linux-musl/release/vortex-cli scripts/build-release.sh
+```
 
 Workflows that run the tests and build this archive on GitHub are in `docs/workflows/`, not yet switched on. Its README says how.
 

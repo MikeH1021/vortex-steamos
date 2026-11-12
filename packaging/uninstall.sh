@@ -9,7 +9,11 @@
 set -eu
 
 data="${XDG_DATA_HOME:-$HOME/.local/share}"
+if command -v python3 >/dev/null 2>&1 && [ -f "$data/vortex-steamos/steam-artwork.py" ]; then
+    python3 "$data/vortex-steamos/steam-artwork.py" --remove "$data/vortex-steamos/vortex-steamos" || true
+fi
 rm -f "$data/applications/vortex-steamos.desktop"
+rm -f "$data/icons/hicolor/256x256/apps/vortex-steamos.png"
 rm -f "$data/icons/hicolor/scalable/apps/vortex-steamos.svg"
 rm -f "$HOME/.local/bin/vortex-steamos"
 rm -rf "$data/vortex-steamos"

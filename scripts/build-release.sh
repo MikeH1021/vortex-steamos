@@ -6,7 +6,8 @@
 #     and a musl C compiler (musl-tools on Debian and Ubuntu, musl on Arch)
 #   - Godot 4.3 or newer with its Linux export templates installed
 #
-# Set GODOT to the editor binary when it is not called "godot".
+# Set GODOT to the editor binary when it is not called "godot", and
+# VORTEX_CLI_BIN to use a vortex-cli that is already built.
 # The GitHub workflow in .github/workflows/release.yml runs this for you.
 set -eu
 
@@ -24,8 +25,14 @@ mkdir -p "$stage"
 
 # A static binary runs the same on SteamOS (Arch) and Bazzite (Fedora),
 # whatever C library version they ship.
-cargo build --release --locked --target "$target" -p vortex-cli
-cp "target/$target/release/vortex-cli" "$stage/vortex-cli"
+# VORTEX_CLI_BIN names a vortex-cli built somewhere else, such as in a
+# container, for a machine with no musl C compiler.
+if [ -n "${VORTEX_CLI_BIN:-}" ]; then
+    cp "$VORTEX_CLI_BIN" "$stage/vortex-cli"
+else
+    cargo build --release --locked --target "$target" -p vortex-cli
+    cp "target/$target/release/vortex-cli" "$stage/vortex-cli"
+fi
 
 "$godot" --headless --path ui --import
 "$godot" --headless --path ui --export-release Linux "$root/$stage/vortex-steamos.x86_64"
@@ -35,8 +42,8 @@ if [ ! -s "$stage/vortex-steamos.x86_64" ]; then
 fi
 
 cp packaging/vortex-steamos packaging/install.sh packaging/uninstall.sh "$stage/"
-cp packaging/vortex-steamos.desktop.in "$stage/"
-cp ui/icon.svg "$stage/vortex-steamos.svg"
+cp packaging/vortex-steamos.desktop.in packaging/steam-artwork.py "$stage/"
+cp -r packaging/steam "$stage/steam"
 cp LICENSE.md README.md "$stage/"
 chmod 755 "$stage/vortex-steamos" "$stage/vortex-steamos.x86_64" "$stage/vortex-cli" "$stage/install.sh" "$stage/uninstall.sh"
 

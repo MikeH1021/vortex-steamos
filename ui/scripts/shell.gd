@@ -137,8 +137,10 @@ func _ready() -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
+		# Only the window the file names may take it away. A second window
+		# closing must not make the first one invisible to the launcher.
 		var pid := _pid_path()
-		if FileAccess.file_exists(pid):
+		if FileAccess.file_exists(pid) and int(FileAccess.get_file_as_string(pid).strip_edges()) == OS.get_process_id():
 			DirAccess.remove_absolute(pid)
 
 
@@ -259,6 +261,10 @@ func _apply_window() -> void:
 
 
 func _install_actions() -> void:
+	# Godot's own actions answer to the keyboard only. A and B have to be
+	# added, or a controller can move the highlight and do nothing with it.
+	_add_button("ui_accept", JOY_BUTTON_A)
+	_add_button("ui_cancel", JOY_BUTTON_B)
 	_bind("section_prev", KEY_Q, JOY_BUTTON_LEFT_SHOULDER)
 	_bind("section_next", KEY_E, JOY_BUTTON_RIGHT_SHOULDER)
 	_bind("toggle", KEY_X, JOY_BUTTON_X)
@@ -273,6 +279,13 @@ func _install_actions() -> void:
 		trigger.axis = page[2]
 		trigger.axis_value = 1.0
 		InputMap.action_add_event(page[0], trigger)
+
+
+func _add_button(action: StringName, button: JoyButton) -> void:
+	var joy_event := InputEventJoypadButton.new()
+	joy_event.button_index = button
+	if not InputMap.action_has_event(action, joy_event):
+		InputMap.action_add_event(action, joy_event)
 
 
 func _bind(action: StringName, key: Key, button: JoyButton) -> void:
@@ -294,6 +307,9 @@ func _input(event: InputEvent) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _busy:
+		return
+	# Letters typed at a text box are text, not the X, Y, Q and E shortcuts.
+	if event is InputEventKey and get_viewport().gui_get_focus_owner() is LineEdit and not event.is_action("ui_cancel"):
 		return
 	var handled := true
 	if event.is_action_pressed("ui_cancel"):
@@ -1563,6 +1579,8 @@ func _pid_path() -> String:
 
 func _write_pid() -> void:
 	DirAccess.make_dir_recursive_absolute(_state_dir())
+	if _another_instance_running():
+		return
 	var file := FileAccess.open(_pid_path(), FileAccess.WRITE)
 	if file != null:
 		file.store_string(str(OS.get_process_id()))
@@ -1576,7 +1594,11 @@ func _another_instance_running() -> bool:
 	if pid <= 0 or pid == OS.get_process_id():
 		return false
 	if OS.get_name() == "Linux":
-		return DirAccess.dir_exists_absolute("/proc/%d" % pid)
+		# A number left over from a crash can belong to any program by now.
+		var output: Array = []
+		if OS.execute("readlink", ["-f", "/proc/%d/exe" % pid], output) != 0 or output.is_empty():
+			return false
+		return str(output[0]).strip_edges() == OS.get_executable_path()
 	return OS.is_process_running(pid)
 
 
@@ -1978,7 +2000,19 @@ func _line_edit(placeholder: String, secret: bool) -> LineEdit:
 	line.add_theme_color_override("font_placeholder_color", MUTED)
 	line.add_theme_stylebox_override("normal", _panel(Color(CARD, 0.86), 0, 4, 16))
 	line.add_theme_stylebox_override("focus", _focus_panel(4, 16))
-	line.focus_entered.connect(_open_keyboard)
+	# A box reached with the D-pad is highlighted but not yet taking text.
+	# Start editing at once so a keyboard or a paste just works, and bring
+	# up Steam's keyboard when A is pressed on it, not every time the
+	# highlight passes over.
+	line.focus_entered.connect(func() -> void:
+		if not line.is_editing():
+			line.edit()
+	)
+	line.gui_input.connect(func(event: InputEvent) -> void:
+		if event is InputEventJoypadButton and event.is_action_pressed("ui_accept"):
+			_open_keyboard()
+			line.accept_event()
+	)
 	return line
 
 
