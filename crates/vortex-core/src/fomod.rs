@@ -32,6 +32,14 @@ pub struct FomodChoice {
     pub step: String,
     pub group: String,
     pub plugins: Vec<String>,
+    /// Where the step and the group are in the installer, counted from 0.
+    /// Installers reuse names ("Options", "Choose"), so the names alone do
+    /// not say which group a choice is for. Names are the fallback for a
+    /// choice written without positions.
+    #[serde(default)]
+    pub step_index: Option<usize>,
+    #[serde(default)]
+    pub group_index: Option<usize>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -51,6 +59,9 @@ pub struct FomodStep {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct FomodGroup {
+    /// Position of the step in the installer and of the group in the step.
+    pub step_index: usize,
+    pub index: usize,
     pub name: String,
     pub select: String,
     pub hint: String,
@@ -542,7 +553,7 @@ fn evaluate(
     let mut steps = Vec::new();
     let mut packed = module.required.clone();
     let mut notes = Vec::new();
-    for step in &module.steps {
+    for (step_index, step) in module.steps.iter().enumerate() {
         let visible = step
             .visible
             .as_ref()
@@ -558,13 +569,13 @@ fn evaluate(
         }
         let mut groups = Vec::new();
         let mut step_valid = true;
-        for group in &step.groups {
+        for (group_index, group) in step.groups.iter().enumerate() {
             let kinds: Vec<String> = group
                 .plugins
                 .iter()
                 .map(|plugin| resolve_kind(plugin, &flags, files))
                 .collect();
-            let choice = find_choice(choices, &step.name, &group.name);
+            let choice = find_choice(choices, step_index, group_index, &step.name, &group.name);
             let (indices, valid) = decide(group.select, &kinds, &group.plugins, choice);
             if !valid {
                 step_valid = false;
@@ -598,6 +609,8 @@ fn evaluate(
                 });
             }
             groups.push(FomodGroup {
+                step_index,
+                index: group_index,
                 name: group.name.clone(),
                 select: group.select.as_str().to_string(),
                 hint: group.select.hint().to_string(),
@@ -668,10 +681,26 @@ fn resolve_kind(
     }
 }
 
-fn find_choice<'a>(choices: &'a [FomodChoice], step: &str, group: &str) -> Option<&'a FomodChoice> {
-    choices.iter().find(|choice| {
-        choice.step.eq_ignore_ascii_case(step) && choice.group.eq_ignore_ascii_case(group)
-    })
+fn find_choice<'a>(
+    choices: &'a [FomodChoice],
+    step_index: usize,
+    group_index: usize,
+    step: &str,
+    group: &str,
+) -> Option<&'a FomodChoice> {
+    choices
+        .iter()
+        .find(|choice| {
+            choice.step_index == Some(step_index) && choice.group_index == Some(group_index)
+        })
+        .or_else(|| {
+            choices.iter().find(|choice| {
+                choice.step_index.is_none()
+                    && choice.group_index.is_none()
+                    && choice.step.eq_ignore_ascii_case(step)
+                    && choice.group.eq_ignore_ascii_case(group)
+            })
+        })
 }
 
 fn decide(
@@ -1224,6 +1253,8 @@ mod tests {
         assert!(!dest.join("FrostfallPatch.esp").exists());
 
         let lite = [FomodChoice {
+            step_index: None,
+            group_index: None,
             step: "Options".into(),
             group: "Version".into(),
             plugins: vec!["Lite".into()],
@@ -1257,6 +1288,8 @@ mod tests {
         let root = tempfile::tempdir().unwrap();
         let package = sample_package(root.path());
         let choices = [FomodChoice {
+            step_index: None,
+            group_index: None,
             step: "Options".into(),
             group: "Version".into(),
             plugins: Vec::new(),

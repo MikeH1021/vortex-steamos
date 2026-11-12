@@ -106,6 +106,10 @@ var _overlay: Control
 var _overlay_label: Label
 var _overlay_bar: ProgressBar
 var _side_text: Label
+var _side_holder: MarginContainer
+var _side_box: Control
+var _scroll: ScrollContainer
+var _link_notice_shown := false
 var _side_image: TextureRect
 var _http: HTTPRequest
 
@@ -117,6 +121,7 @@ func _ready() -> void:
 		get_tree().quit()
 		return
 	_write_pid()
+	_drop_abandoned_links()
 	_install_actions()
 	_apply_window()
 	_core = CoreClient.new()
@@ -601,6 +606,9 @@ func _build() -> void:
 	_status_label = _label("", 18, MUTED)
 	_status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_status_label.custom_minimum_size = Vector2(0, 26)
+	# A long description must not push the list off the screen.
+	_status_label.max_lines_visible = 4
+	_status_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	heading_box.add_child(_status_label)
 
 	var scroll := ScrollContainer.new()
@@ -608,6 +616,8 @@ func _build() -> void:
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.follow_focus = true
 	root.add_child(scroll)
+	_scroll = scroll
+	scroll.get_v_scroll_bar().value_changed.connect(func(_value: float) -> void: _stick_side())
 	var margin := _margin(EDGE, 10, EDGE, 16)
 	margin.size_flags_horizontal = SIZE_EXPAND_FILL
 	scroll.add_child(margin)
@@ -956,15 +966,17 @@ func _paint_mods() -> void:
 	if not _pending.is_empty():
 		status += "  %d download%s waiting in Downloads." % [_pending.size(), "" if _pending.size() == 1 else "s"]
 	_set_status(status)
+	# Above the list: below it, a long list keeps the note out of reach of a
+	# controller, and it can hold a launch option the game will not run without.
+	if notes != "":
+		_heading("Good to know")
+		_note(notes)
 	for mod in _mods:
 		var on: bool = mod.get("enabled", false)
 		var row := _row(str(mod.get("name", mod.get("id", "Mod"))), _mod_facts(mod), "ON" if on else "OFF", on)
 		row.set_meta("key", str(mod.get("id", "")))
 		row.set_meta("item", mod)
 		row.pressed.connect(_open_mod.bind(mod))
-	if notes != "":
-		_heading("Good to know")
-		_note(notes)
 
 
 func _mod_facts(mod: Dictionary) -> String:
@@ -1317,10 +1329,19 @@ func _paint_search() -> void:
 
 
 func _side_panel(parent: Control, text: String) -> void:
+	# The panel sits beside a list that can be much longer than the screen.
+	# Its holder is as tall as the list, and the panel is pushed down inside
+	# it as the list scrolls, so what it says about the highlighted row stays
+	# in view.
+	_side_holder = MarginContainer.new()
+	_side_holder.add_theme_constant_override("margin_top", 0)
+	parent.add_child(_side_holder)
 	var side := PanelContainer.new()
 	side.custom_minimum_size = Vector2(360, 440)
+	side.size_flags_vertical = SIZE_SHRINK_BEGIN
 	side.add_theme_stylebox_override("panel", _panel(Color(CARD, 0.86), 0, 4, 20))
-	parent.add_child(side)
+	_side_holder.add_child(side)
+	_side_box = side
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 14)
 	side.add_child(box)
@@ -1333,6 +1354,17 @@ func _side_panel(parent: Control, text: String) -> void:
 	_side_text = _label(text, 19, TEXT)
 	_side_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(_side_text)
+
+
+func _stick_side() -> void:
+	if not is_instance_valid(_side_holder) or not is_instance_valid(_side_box) or _scroll == null:
+		return
+		# Positions on screen lag a frame behind the scroll bar. The holder's
+	# place inside the scrolled content does not move, so work from that.
+	var content := _content.get_parent() as Control
+	var hidden := float(_scroll.scroll_vertical) - (_side_holder.global_position.y - content.global_position.y)
+	var room := maxf(_side_holder.size.y - _side_box.size.y, 0.0)
+	_side_holder.add_theme_constant_override("margin_top", int(clampf(hidden, 0.0, room)))
 
 
 func _describe_hit(hit: Dictionary) -> void:
@@ -1510,6 +1542,15 @@ func _poll_links() -> void:
 	files.sort()
 	for file in files:
 		if file.ends_with(".nxm"):
+			if _account_known and not _account.get("signed_in", false):
+				# The link waits for the sign-in instead of being used up on
+				# an error. It is picked up as soon as there is an account.
+				if not _link_notice_shown:
+					_link_notice_shown = true
+					_show("account")
+					_set_status("Sign in to Nexus first. Your download starts as soon as you have.", true)
+				return
+			_link_notice_shown = false
 			await _handle_link(queue.path_join(file))
 			return
 
@@ -1518,16 +1559,31 @@ func _handle_link(file: String) -> void:
 	# Bring the window forward so the download does not happen out of sight.
 	DisplayServer.window_request_attention()
 	DisplayServer.window_move_to_foreground()
+	# Take the link out of the queue before acting on it. Whatever happens
+	# next, be it a second window, a crash, or the window being closed half
+	# way, it is not downloaded twice.
+	var claimed := file + ".taking"
+	if DirAccess.rename_absolute(file, claimed) != OK:
+		return
+	file = claimed
 	var progress := _scratch("download-progress.json")
 	var args := ["nexus", "nxm", "--from", file, "--progress", progress]
 	if _game_id() != "":
 		args.append_array(["--prefer", _game_id()])
 	var result: Dictionary = await _call(args, "Downloading from Nexus Mods…", progress)
-	# The link is single use. Keeping a failed one would retry it forever.
-	DirAccess.remove_absolute(file)
+	var failed_sign_in: bool = not result.get("ok", false) and str(result.get("error", "")).begins_with("Sign in")
+	if failed_sign_in:
+		# The saved key stopped working. The link is still good once there
+		# is a new one.
+		_account = {"ok": true, "signed_in": false, "name": "", "premium": false}
+		_link_notice_shown = true
+		DirAccess.rename_absolute(file, file.trim_suffix(".taking"))
+	else:
+		# The link is single use. Keeping a failed one would retry it forever.
+		DirAccess.remove_absolute(file)
 	if not result.get("ok", false):
 		var error := str(result.get("error", "That download did not work."))
-		if error.begins_with("Sign in"):
+		if failed_sign_in:
 			_show("account")
 		else:
 			_paint()
@@ -1539,8 +1595,24 @@ func _handle_link(file: String) -> void:
 			_selected = index
 			_mods = []
 			_plugins = []
+			_pending = []
+			_failed = []
 			_save_setting("last_game", game_id)
 	await _finish_download(result)
+
+
+## A link that was being downloaded when the last window went away. Its file
+## either arrived, and is installed from the incoming folder, or did not, and
+## the link's grant is spent either way.
+func _drop_abandoned_links() -> void:
+	if _another_instance_running():
+		return
+	var queue := _queue_dir()
+	if not DirAccess.dir_exists_absolute(queue):
+		return
+	for file in DirAccess.get_files_at(queue):
+		if file.ends_with(".taking") or file.ends_with(".part"):
+			DirAccess.remove_absolute(queue.path_join(file))
 
 
 func _links_from_arguments() -> PackedStringArray:
@@ -1790,7 +1862,7 @@ func _paint_wizard() -> void:
 			var row := _row(str(option.get("name", "Option")), note, "✓" if chosen else " ", chosen, TEXT, left)
 			row.disabled = option.get("locked", false)
 			row.focus_mode = FOCUS_ALL
-			row.set_meta("key", "%s/%s" % [group.get("name", ""), option.get("name", "")])
+			row.set_meta("key", "%d/%d/%s" % [int(group.get("step_index", 0)), int(group.get("index", 0)), option.get("name", "")])
 			row.set_meta("item", option)
 			row.set_meta("details", str(option.get("description", "")))
 			row.focus_entered.connect(_describe_option.bind(option))
@@ -1828,18 +1900,27 @@ func _wizard_pick(step_name: String, group: Dictionary, option_name: String) -> 
 				names.append(option_name)
 	var stored := false
 	for choice in _wizard_choices:
-		if str(choice.get("step", "")) == step_name and str(choice.get("group", "")) == group_name:
+		if _is_choice_for(choice, group):
 			choice["plugins"] = names
 			stored = true
 	if not stored:
-		_wizard_choices.append({"step": step_name, "group": group_name, "plugins": names})
-	_focus_key = "%s/%s" % [group_name, option_name]
+		_wizard_choices.append({
+			"step": step_name, "group": group_name, "plugins": names,
+			"step_index": int(group.get("step_index", 0)), "group_index": int(group.get("index", 0)),
+		})
+	_focus_key = "%d/%d/%s" % [int(group.get("step_index", 0)), int(group.get("index", 0)), option_name]
 	await _reload_wizard()
 
 
-func _choice_names(step_name: String, group: Dictionary) -> Array:
+## Installers reuse step and group names, so a choice is told apart by
+## where its group sits in the installer.
+func _is_choice_for(choice: Dictionary, group: Dictionary) -> bool:
+	return int(choice.get("step_index", -1)) == int(group.get("step_index", 0)) and int(choice.get("group_index", -1)) == int(group.get("index", 0))
+
+
+func _choice_names(_step_name: String, group: Dictionary) -> Array:
 	for choice in _wizard_choices:
-		if str(choice.get("step", "")) == step_name and str(choice.get("group", "")) == str(group.get("name", "")):
+		if _is_choice_for(choice, group):
 			return (choice.get("plugins", []) as Array).duplicate()
 	var names: Array = []
 	for option in group.get("plugins", []):

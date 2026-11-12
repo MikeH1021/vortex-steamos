@@ -89,13 +89,13 @@ A mod with an installer (FOMOD) opens a wizard so you can pick its options. Requ
 
 - **Mods** lists what is installed. X turns a mod on or off. A opens its options: move it up or down, open its Nexus page, or remove it.
 - When two mods ship the same file, the mod lower in the list wins. Moving a mod changes who wins.
-- **Plugins** is the load order the game uses, top to bottom. X turns a plugin on or off, and A lets you move it earlier or later. Base game plugins stay on and stay first.
+- **Plugins** is the load order the game uses, top to bottom. X turns a plugin on or off, and A lets you move it earlier or later. Base game plugins stay on and stay first. A plugin whose mod is turned off and on again comes back where it was.
 
 Turning a mod off takes its files out of the game folder and keeps the mod installed. For the Bethesda games, a file that belongs to the game itself is never replaced. For other games a mod may stand in for a game file: the original is kept next to it as `<name>.vortex_backup` and put back when the mod is turned off.
 
 ## How it works
 
-- Mods are staged in `<steam library>/steamapps/vortex/<game>/mods`, on the same drive as the game. Enabled mods are hardlinked into the game's `Data` folder, so they take no extra space. A library on a different drive from its staging folder falls back to symlinks.
+- Mods are staged in `<steam library>/steamapps/vortex/<game>/mods`, on the same drive as the game. A game later moved to another Steam library keeps its mods where they were staged. Enabled mods are hardlinked into the game's `Data` folder, so they take no extra space. A library on a different drive from its staging folder falls back to symlinks.
 - Windows does not care about letter case and Linux does. A mod that ships `textures/` is merged into the game's existing `Textures/`, and `Plugins.txt` is written under whichever spelling the game already created. Without this a game silently ignores half of a mod.
 - Archives are unpacked next to the staging folder, not in `/tmp`. On SteamOS `/tmp` is memory, and a texture pack does not fit there.
 - Plugin lists are written the way each game expects. Special Edition and Fallout 4 use the `*Plugin.esp` format and leave base masters out. The older games list enabled plugins and take their order from file timestamps.
@@ -104,7 +104,7 @@ Turning a mod off takes its files out of the game folder and keeps the mod insta
 
 ## What it does not do yet
 
-- Starting a script extender. SKSE, F4SE, and the like are installed into the game folder, but Steam still starts the game's own program. Pointing Steam at the extender's loader is up to you for now.
+- Starting a script extender. SKSE, F4SE, and the like are installed into the game folder, but Steam still starts the game's own program. For Skyrim and Skyrim Special Edition the Mods screen shows the launch option that points Steam at the loader. That line has not been tried in a game yet.
 - ENB and other mods that put whole folders, or files other than `.exe`, `.dll`, and `.asi`, into the game folder of a Bethesda game. Install those by hand.
 - Load order files, file merging, and helper tools for the games ported from Vortex. Baldur's Gate 3 mods, for one, are installed here and then switched on in the game's own mod manager.
 - Games Vortex only finds through the Windows registry or another store, such as The Sims 4, World of Tanks, and Halo: The Master Chief Collection.
@@ -227,7 +227,7 @@ vortex-cli nexus nxm --url 'nxm://skyrimspecialedition/mods/667/files/1234?key=â
 
 `vortex-cli --help` lists all of them. `purge` takes every link this app made back out of a game folder and leaves the mods installed. Run it before uninstalling if you want the game folder exactly as Steam left it.
 
-For an installer, `fomod` prints the steps and `install --choices choices.json` installs with your picks. `choices.json` is a list of `{ "step", "group", "plugins" }`. Game-version and script-extender checks inside an installer are treated as satisfied.
+For an installer, `fomod` prints the steps and `install --choices choices.json` installs with your picks. `choices.json` is a list of `{ "step", "group", "plugins" }`. Add `"step_index"` and `"group_index"`, counted from 0, when an installer has two steps or groups with the same name. Game-version and script-extender checks inside an installer are treated as satisfied.
 
 ## Project status and history
 

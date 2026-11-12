@@ -426,7 +426,19 @@ fn find_game(
         .iter()
         .map(|(name, path)| (name.clone(), place(path)))
         .collect();
-    let staging_path = deploy::staging_dir(library, &game.id);
+    // Mods are staged in the library the game was in when the first one was
+    // installed. A game Steam has since moved to another library keeps its
+    // mods where they are, and they are linked across from there.
+    let own_staging = deploy::staging_dir(library, &game.id);
+    let staging_path = if own_staging.join("mods.json").is_file() {
+        own_staging
+    } else {
+        libraries
+            .iter()
+            .map(|other| deploy::staging_dir(other, &game.id))
+            .find(|other| other.join("mods.json").is_file())
+            .unwrap_or(own_staging)
+    };
     let in_prefix = game.mod_path.base != Base::Game
         || game.targets.values().any(|path| path.base != Base::Game);
     Ok(Some(InstalledGame {

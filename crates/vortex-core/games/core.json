@@ -51,7 +51,8 @@
     "extender": {
       "name": "SKSE64",
       "loader": "skse64_loader.exe"
-    }
+    },
+    "notes": "SKSE64 installs like any mod: download it from Nexus Mods and this app puts its loader next to the game. Steam still starts the game's own launcher. To start the game through SKSE64, set the game's launch options in Steam to: bash -c 'exec \"${@/SkyrimSELauncher.exe/skse64_loader.exe}\"' -- %command%"
   },
   {
     "id": "skyrim",
@@ -88,7 +89,8 @@
     "extender": {
       "name": "SKSE",
       "loader": "skse_loader.exe"
-    }
+    },
+    "notes": "SKSE installs like any mod: download it from Nexus Mods and this app puts its loader next to the game. Steam still starts the game's own launcher. To start the game through SKSE, set the game's launch options in Steam to: bash -c 'exec \"${@/SkyrimLauncher.exe/skse_loader.exe}\"' -- %command%"
   },
   {
     "id": "skyrimvr",

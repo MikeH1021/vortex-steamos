@@ -809,7 +809,25 @@ fn placed_by_us(dest: &Path, record: &DeployedFile, source: &Path) -> bool {
     if meta.file_type().is_symlink() || record.ino == 0 {
         return is_our_link(dest, source);
     }
-    meta.is_file() && hardlink_inode(dest) == record.ino
+    meta.is_file() && (hardlink_inode(dest) == record.ino || moved_copy(&meta, source))
+}
+
+/// Steam moving a game to another drive turns each of our hardlinks into a
+/// plain copy. A recorded file that now sits on a different drive from its
+/// staged source, with the same size and time, is still the one we placed.
+fn moved_copy(dest: &fs::Metadata, source: &Path) -> bool {
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::MetadataExt;
+        if let Ok(staged) = fs::metadata(source) {
+            return dest.nlink() == 1
+                && dest.dev() != staged.dev()
+                && dest.len() == staged.len()
+                && dest.mtime() == staged.mtime();
+        }
+    }
+    let _ = (dest, source);
+    false
 }
 
 fn is_our_link(dest: &Path, source: &Path) -> bool {
