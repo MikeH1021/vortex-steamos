@@ -243,13 +243,91 @@ fn merged(files: &PluginFiles<'_>) -> io::Result<Vec<Plugin>> {
             push_plugin(&mut result, found, plugin.enabled, false);
         }
     }
+    // The classic list names only what is on, so a plugin missing from it is
+    // one the player turned off in the game's launcher. Without a load order
+    // file of ours to say otherwise, it stays off. Anywhere else, a plugin
+    // not seen before is a newly installed one and starts on.
+    let launcher_list = files.format == PluginFormat::Original
+        && previous_order.is_none()
+        && !parse_plugin_lines(&previous_plugins).is_empty();
+    // A plugin that is back after its mod was turned off and on again goes
+    // where it was, in the state it was in.
+    let remembered = read_remembered(files);
+    for found in &on_disk {
+        if has_plugin(&result, found) {
+            continue;
+        }
+        let Some(at) = position_of(&remembered, found) else {
+            continue;
+        };
+        let after = remembered[..at]
+            .iter()
+            .rev()
+            .find_map(|(earlier, _)| result.iter().position(|p| p.name.eq_ignore_ascii_case(earlier)));
+        let plugin = Plugin {
+            name: found.clone(),
+            enabled: remembered[at].1,
+            native: false,
+        };
+        match after {
+            Some(index) => result.insert(index + 1, plugin),
+            None => result.insert(0, plugin),
+        }
+    }
     for found in &on_disk {
         let is_native = is_native(found, files.native);
-        push_plugin(&mut result, found.clone(), true, is_native);
+        push_plugin(&mut result, found.clone(), is_native || !launcher_list, is_native);
     }
     // Stable, so plugins keep their order inside each block.
     result.sort_by_key(load_rank);
     Ok(result)
+}
+
+fn has_plugin(plugins: &[Plugin], name: &str) -> bool {
+    plugins.iter().any(|plugin| plugin.name.eq_ignore_ascii_case(name))
+}
+
+fn position_of(list: &[(String, bool)], name: &str) -> Option<usize> {
+    list.iter().position(|(entry, _)| entry.eq_ignore_ascii_case(name))
+}
+
+/// The game's own lists only describe plugins that are in `Data` right now.
+/// This file, next to them, also keeps the place and state of plugins that
+/// are gone for the moment because their mod is turned off.
+fn remembered_path(files: &PluginFiles<'_>) -> std::path::PathBuf {
+    files.loadorder_txt.with_file_name("loadorder.vortex.txt")
+}
+
+fn read_remembered(files: &PluginFiles<'_>) -> Vec<(String, bool)> {
+    parse_plugin_lines(&read_list_file(&remembered_path(files)))
+        .into_iter()
+        .filter(|(name, _)| !is_native(name, files.native))
+        .collect()
+}
+
+/// The current order, with every remembered plugin that is not there right
+/// now kept just after the plugin it used to follow.
+fn remember(current: &[Plugin], old: &[(String, bool)]) -> Vec<(String, bool)> {
+    let mut list: Vec<(String, bool)> = current
+        .iter()
+        .filter(|plugin| !plugin.native)
+        .map(|plugin| (plugin.name.clone(), plugin.enabled))
+        .collect();
+    for (at, (name, enabled)) in old.iter().enumerate() {
+        if position_of(&list, name).is_some() {
+            continue;
+        }
+        let after = old[..at]
+            .iter()
+            .rev()
+            .find_map(|(earlier, _)| position_of(&list, earlier));
+        let entry = (name.clone(), *enabled);
+        match after {
+            Some(index) => list.insert(index + 1, entry),
+            None => list.insert(0, entry),
+        }
+    }
+    list
 }
 
 fn read_list_file(path: &Path) -> String {
@@ -264,6 +342,17 @@ fn write_lists(files: &PluginFiles<'_>, plugins: &[Plugin]) -> io::Result<()> {
     }
     crate::deploy::write_atomic(files.plugins_txt, &write_plugins_txt(plugins, files.format))?;
     crate::deploy::write_atomic(files.loadorder_txt, &write_loadorder_txt(plugins))?;
+    let remembered = remember(plugins, &read_remembered(files));
+    crate::deploy::write_atomic(
+        &remembered_path(files),
+        &render(remembered.iter().map(|(name, enabled)| {
+            if *enabled {
+                format!("*{name}")
+            } else {
+                name.clone()
+            }
+        })),
+    )?;
     if files.format == PluginFormat::Original {
         let names: Vec<&str> = plugins.iter().map(|plugin| plugin.name.as_str()).collect();
         apply_classic_timestamps(files.data_dir, &names)?;
@@ -278,7 +367,8 @@ fn scan_plugin_files(data_dir: &Path, extensions: &[&str]) -> io::Result<Vec<Str
     }
     for entry in std::fs::read_dir(data_dir)? {
         let entry = entry?;
-        if !entry.file_type()?.is_file() {
+        // Follows links: a library on another drive is deployed with symlinks.
+        if !entry.path().is_file() {
             continue;
         }
         let name = entry.file_name().to_string_lossy().to_string();
@@ -359,7 +449,8 @@ fn parse_plugin_lines(text: &str) -> Vec<(String, bool)> {
 }
 
 fn parse_plugin_line(raw: &str) -> Option<(String, bool)> {
-    let trimmed = raw.trim();
+    // Some Windows tools save the list with a byte order mark in front.
+    let trimmed = raw.trim().trim_start_matches('\u{feff}').trim();
     if trimmed.is_empty() || trimmed.starts_with('#') {
         return None;
     }
@@ -458,6 +549,96 @@ mod tests {
         assert_eq!(read[0].name, "Skyrim.esm");
         assert!(read[0].enabled && read[0].native);
         assert!(read[1].enabled && !read[1].native);
+    }
+
+    #[test]
+    fn a_launcher_list_keeps_what_the_player_turned_off() {
+        let root = tempfile::tempdir().unwrap();
+        let data = root.path().join("Data");
+        std::fs::create_dir_all(&data).unwrap();
+        for name in ["Skyrim.esm", "Update.esm", "Dawnguard.esm", "Dragonborn.esm"] {
+            std::fs::write(data.join(name), b"plugin").unwrap();
+        }
+        let plugins_txt = root.path().join("plugins.txt");
+        let loadorder_txt = root.path().join("loadorder.txt");
+        // As the game's launcher writes it, with a byte order mark from an editor.
+        std::fs::write(&plugins_txt, "\u{feff}Skyrim.esm\r\nUpdate.esm\r\nDawnguard.esm\r\n").unwrap();
+        let natives = vec!["skyrim.esm".to_string(), "update.esm".to_string()];
+        let result = reconcile_plugins(
+            &data,
+            &plugins_txt,
+            &loadorder_txt,
+            PluginFormat::Original,
+            &natives,
+            &[".esm", ".esp"],
+        )
+        .unwrap();
+        let state: Vec<(&str, bool)> = result
+            .iter()
+            .map(|plugin| (plugin.name.as_str(), plugin.enabled))
+            .collect();
+        assert_eq!(
+            state,
+            [
+                ("Skyrim.esm", true),
+                ("Update.esm", true),
+                ("Dawnguard.esm", true),
+                ("Dragonborn.esm", false)
+            ]
+        );
+        // From here on our own load order file is there, and a plugin that
+        // shows up is a newly installed one.
+        std::fs::write(data.join("New.esp"), b"plugin").unwrap();
+        let result = reconcile_plugins(
+            &data,
+            &plugins_txt,
+            &loadorder_txt,
+            PluginFormat::Original,
+            &natives,
+            &[".esm", ".esp"],
+        )
+        .unwrap();
+        assert!(result.iter().any(|plugin| plugin.name == "New.esp" && plugin.enabled));
+        assert!(result.iter().any(|plugin| plugin.name == "Dragonborn.esm" && !plugin.enabled));
+    }
+
+    #[test]
+    fn a_plugin_that_comes_back_keeps_its_place_and_state() {
+        let root = tempfile::tempdir().unwrap();
+        let data = root.path().join("Data");
+        std::fs::create_dir_all(&data).unwrap();
+        for name in ["Skyrim.esm", "C.esp", "A.esp", "B.esp", "C2.esp"] {
+            std::fs::write(data.join(name), b"plugin").unwrap();
+        }
+        let plugins_txt = root.path().join("plugins.txt");
+        let loadorder_txt = root.path().join("loadorder.txt");
+        std::fs::write(&plugins_txt, "*C.esp\r\n*A.esp\r\n*B.esp\r\nC2.esp\r\n").unwrap();
+        let natives = vec!["skyrim.esm".to_string()];
+        let sync = || {
+            reconcile_plugins(
+                &data,
+                &plugins_txt,
+                &loadorder_txt,
+                PluginFormat::Asterisk,
+                &natives,
+                &[".esm", ".esp", ".esl"],
+            )
+            .unwrap()
+            .into_iter()
+            .filter(|plugin| !plugin.native)
+            .map(|plugin| (plugin.name, plugin.enabled))
+            .collect::<Vec<_>>()
+        };
+        let before = sync();
+        // The mod that owns C.esp and C2.esp is turned off, then on again.
+        std::fs::remove_file(data.join("C.esp")).unwrap();
+        std::fs::remove_file(data.join("C2.esp")).unwrap();
+        assert_eq!(sync().len(), 2);
+        std::fs::write(data.join("C.esp"), b"plugin").unwrap();
+        std::fs::write(data.join("C2.esp"), b"plugin").unwrap();
+        assert_eq!(sync(), before);
+        assert_eq!(before[0], ("C.esp".to_string(), true));
+        assert_eq!(before[3], ("C2.esp".to_string(), false));
     }
 
     #[test]

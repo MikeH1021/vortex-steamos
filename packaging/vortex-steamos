@@ -3,7 +3,6 @@
 # already open. The desktop entry runs this when a browser opens a
 # "Mod Manager Download" link.
 set -eu
-umask 077
 
 here=$(dirname "$(readlink -f "$0")")
 app="$here/vortex-steamos.x86_64"
@@ -16,13 +15,21 @@ queued=0
 for arg in "$@"; do
     case "$arg" in
         nxm://* | NXM://*)
-            printf '%s' "$arg" >"$state/links/$(date +%s)-$$-$queued.nxm"
+            # A link carries a download grant, so the file is private. It is
+            # written under another name first: the app must never read half
+            # a link. The app itself keeps the usual permissions, since the
+            # mod files it places belong in the game folder like any other.
+            link="$state/links/$(date +%s)-$$-$queued"
+            (umask 077 && printf '%s' "$arg" >"$link.part")
+            mv "$link.part" "$link.nxm"
             queued=$((queued + 1))
             ;;
     esac
 done
 
-if [ "$queued" -gt 0 ] && [ -r "$state/ui.pid" ]; then
+# One window at a time. Two would both act on the same link and the same
+# game folder. With a window already open there is nothing more to start.
+if [ -r "$state/ui.pid" ]; then
     pid=$(cat "$state/ui.pid" 2>/dev/null || true)
     case "$pid" in
         '' | *[!0-9]*) ;;

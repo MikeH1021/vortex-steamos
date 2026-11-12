@@ -432,7 +432,10 @@ fn install_prepared(
             package = picked;
             may_link = true;
         } else if rules.kind == Kind::Bethesda {
-            copy_loose(&content_root(&package_root(&raw)), &dest, may_link)?;
+            let package = package_root(&raw);
+            let content = content_root(&package);
+            copy_loose(&content, &dest, may_link)?;
+            stage_game_folder_files(&package, &content, &dest, may_link)?;
             return Ok(notes);
         }
         let listing = file_list(&package)?;
@@ -794,6 +797,42 @@ fn copy_loose(source: &Path, dest: &Path, may_link: bool) -> Result<(), ModError
     Ok(())
 }
 
+/// Programs and libraries a Bethesda mod ships for the game folder itself:
+/// a script extender's loader, an ENB or engine-fix DLL. The game never reads
+/// these from `Data`, so they are staged for the game folder.
+const GAME_FOLDER_ENDINGS: &[&str] = &[".exe", ".dll", ".asi"];
+
+fn stage_game_folder_files(
+    package: &Path,
+    content: &Path,
+    dest: &Path,
+    may_link: bool,
+) -> Result<(), ModError> {
+    let Ok(entries) = fs::read_dir(package) else {
+        return Ok(());
+    };
+    let root = dest.join(deploy::TARGETS_DIR).join("root");
+    for entry in entries.flatten() {
+        let name = entry.file_name().to_string_lossy().to_string();
+        let lower = name.to_lowercase();
+        let path = entry.path();
+        if !path.is_file() || !GAME_FOLDER_ENDINGS.iter().any(|end| lower.ends_with(end)) {
+            continue;
+        }
+        fs::create_dir_all(&root)?;
+        let to = root.join(&name);
+        if !(may_link && fs::hard_link(&path, &to).is_ok()) {
+            copy_file(&path, &to)?;
+        }
+        // With no `Data` folder in the archive, the same file was just laid
+        // out for `Data` as well. It does not belong there.
+        if content == package {
+            let _ = fs::remove_file(dest.join(&name));
+        }
+    }
+    Ok(())
+}
+
 fn content_root(package: &Path) -> PathBuf {
     if let Some(data) = resolve_case(package, Path::new("Data")) {
         if data.is_dir() {
@@ -810,31 +849,68 @@ fn is_data_folder(name: &str) -> bool {
 }
 
 /// Step through wrapper folders such as `Campfire 1.12/` to the mod itself.
+///
+/// A folder is only a wrapper when what is inside it is recognisably a mod:
+/// a `Data` folder, an installer, a plugin, a game archive, or a folder the
+/// game reads. Going by the folder's name alone used to strip real `Data`
+/// folders the list above did not know (`LightPlacer/`) and to keep
+/// wrappers that had a readme next to them.
 fn package_root(package: &Path) -> PathBuf {
     let mut current = package.to_path_buf();
     for _ in 0..3 {
-        if fomod::find_module_config(&current).is_some() {
-            return current;
-        }
-        if resolve_case(&current, Path::new("Data")).is_some_and(|path| path.is_dir()) {
+        if looks_like_a_mod(&current) {
             return current;
         }
         let Ok(entries) = fs::read_dir(&current) else {
-            return current;
+            break;
         };
-        let useful: Vec<_> = entries
-            .filter_map(|entry| entry.ok())
-            .filter(|entry| !entry.file_name().to_string_lossy().starts_with('.'))
-            .collect();
-        let wrapper = useful.len() == 1
-            && useful[0].path().is_dir()
-            && !is_data_folder(&useful[0].file_name().to_string_lossy());
-        if !wrapper {
-            return current;
+        let mut folders = Vec::new();
+        let mut other_files = false;
+        for entry in entries.flatten() {
+            let name = entry.file_name().to_string_lossy().to_lowercase();
+            if name.starts_with('.') {
+                continue;
+            }
+            let path = entry.path();
+            if path.is_dir() {
+                folders.push(path);
+            } else if !DOC_ENDINGS.iter().any(|end| name.ends_with(end)) {
+                other_files = true;
+            }
         }
-        current = useful[0].path();
+        if other_files || folders.len() != 1 {
+            break;
+        }
+        current = folders.remove(0);
     }
-    current
+    // Nothing recognisable further in: take the archive as it came.
+    package.to_path_buf()
+}
+
+/// Files that sit beside a wrapper folder without being part of the mod.
+const DOC_ENDINGS: &[&str] = &[
+    ".txt", ".md", ".pdf", ".rtf", ".doc", ".docx", ".html", ".htm", ".url", ".jpg", ".jpeg",
+    ".png",
+];
+
+const MOD_FILE_ENDINGS: &[&str] = &[".esp", ".esm", ".esl", ".bsa", ".ba2"];
+
+fn looks_like_a_mod(dir: &Path) -> bool {
+    if fomod::find_module_config(dir).is_some() {
+        return true;
+    }
+    let Ok(entries) = fs::read_dir(dir) else {
+        return false;
+    };
+    entries.flatten().any(|entry| {
+        let name = entry.file_name().to_string_lossy().to_lowercase();
+        if entry.path().is_dir() {
+            name == "data" || is_data_folder(&name)
+        } else {
+            MOD_FILE_ENDINGS.iter().any(|end| name.ends_with(end))
+                || GAME_FOLDER_ENDINGS.iter().any(|end| name.ends_with(end))
+        }
+    })
 }
 
 fn extract_archive(source: &Path, dest: &Path) -> Result<(), ModError> {
@@ -1519,6 +1595,8 @@ mod tests {
         assert!(!incoming.join("Plain.zip").exists());
 
         let choices = [FomodChoice {
+            step_index: None,
+            group_index: None,
             step: "Options".into(),
             group: "Version".into(),
             plugins: vec!["Lite".into()],
@@ -1538,6 +1616,88 @@ mod tests {
         );
         assert!(!staging.join("mods/campfire/full.txt").exists());
         assert!(!incoming.join("Campfire.zip").exists());
+    }
+
+    #[test]
+    fn a_script_extender_is_staged_for_the_game_folder() {
+        let temp = tempfile::tempdir().unwrap();
+        let staging = temp.path().join("staging");
+        let archive = temp.path().join("skse_1_07_03.zip");
+        write_zip(
+            &archive,
+            &[
+                ("skse_1_07_03/skse_loader.exe", b"loader"),
+                ("skse_1_07_03/skse_1_9_32.dll", b"dll"),
+                ("skse_1_07_03/skse_readme.txt", b"docs"),
+                ("skse_1_07_03/src/skse/main.cpp", b"source"),
+                ("skse_1_07_03/Data/Scripts/actor.pex", b"script"),
+            ],
+        );
+        let report = install_with(
+            &staging,
+            &archive,
+            &InstalledFiles::empty(),
+            &[],
+            &InstallRules::bethesda(),
+        )
+        .unwrap();
+        let staged = staging.join("mods").join(&report.installed.id);
+        assert!(staged.join("Scripts/actor.pex").is_file());
+        assert!(staged.join(".targets/root/skse_loader.exe").is_file());
+        assert!(staged.join(".targets/root/skse_1_9_32.dll").is_file());
+        assert!(!staged.join(".targets/root/skse_readme.txt").exists());
+        assert!(!staged.join("skse_loader.exe").exists());
+
+        // An archive of nothing but libraries has no `Data` folder to go by.
+        let fixes = temp.path().join("EngineFixes.zip");
+        write_zip(&fixes, &[("d3dx9_42.dll", b"a"), ("tbb.dll", b"b")]);
+        let report = install_with(
+            &staging,
+            &fixes,
+            &InstalledFiles::empty(),
+            &[],
+            &InstallRules::bethesda(),
+        )
+        .unwrap();
+        let staged = staging.join("mods").join(&report.installed.id);
+        assert!(staged.join(".targets/root/tbb.dll").is_file());
+        assert!(!staged.join("tbb.dll").exists());
+    }
+
+    #[test]
+    fn a_wrapper_is_told_by_what_is_inside_it() {
+        let temp = tempfile::tempdir().unwrap();
+        let staging = temp.path().join("staging");
+        let install = |name: &str, files: &[(&str, &[u8])]| {
+            let archive = temp.path().join(name);
+            write_zip(&archive, files);
+            let report = install_with(
+                &staging,
+                &archive,
+                &InstalledFiles::empty(),
+                &[],
+                &InstallRules::bethesda(),
+            )
+            .unwrap();
+            staging.join("mods").join(report.installed.id)
+        };
+        // A folder the game reads that no list knows about stays a folder.
+        let staged = install("LightCfg.zip", &[("LightPlacer/MyMod.json", b"{}")]);
+        assert!(staged.join("LightPlacer/MyMod.json").is_file());
+        // A readme beside the wrapper does not hide the wrapper.
+        let staged = install(
+            "Cool.zip",
+            &[
+                ("Readme.txt", b"hi"),
+                ("Cool Mod 1.0/Cool.esp", b"plugin"),
+                ("Cool Mod 1.0/textures/c.dds", b"dds"),
+            ],
+        );
+        assert!(staged.join("Cool.esp").is_file());
+        assert!(staged.join("textures/c.dds").is_file());
+        // Two wrappers deep.
+        let staged = install("Deep.zip", &[("Deep 2.0/Deep/meshes/d.nif", b"nif")]);
+        assert!(staged.join("meshes/d.nif").is_file());
     }
 
     #[test]

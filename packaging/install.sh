@@ -33,18 +33,23 @@ data="${XDG_DATA_HOME:-$HOME/.local/share}"
 app="$data/vortex-steamos"
 entry="$data/applications/vortex-steamos.desktop"
 
-for file in vortex-steamos vortex-steamos.x86_64 vortex-cli vortex-steamos.svg vortex-steamos.desktop.in; do
+for file in vortex-steamos vortex-steamos.x86_64 vortex-cli vortex-steamos.desktop.in steam-artwork.py steam/icon.png; do
     if [ ! -f "$src/$file" ]; then
         echo "$file is missing next to install.sh. Extract the whole archive first." >&2
         exit 1
     fi
 done
 
-mkdir -p "$app" "$data/applications" "$data/icons/hicolor/scalable/apps" "$HOME/.local/bin"
+mkdir -p "$app/steam" "$data/applications" "$data/icons/hicolor/256x256/apps" "$HOME/.local/bin"
 install -m 755 "$src/vortex-steamos" "$src/vortex-steamos.x86_64" "$src/vortex-cli" "$app/"
-install -m 755 "$src/uninstall.sh" "$app/"
-install -m 644 "$src/vortex-steamos.svg" "$data/icons/hicolor/scalable/apps/vortex-steamos.svg"
-sed "s|@APP@|$app|g" "$src/vortex-steamos.desktop.in" >"$entry"
+install -m 755 "$src/uninstall.sh" "$src/steam-artwork.py" "$app/"
+install -m 644 "$src"/steam/*.png "$app/steam/"
+install -m 644 "$src/steam/icon.png" "$data/icons/hicolor/256x256/apps/vortex-steamos.png"
+# The icon an earlier version installed.
+rm -f "$data/icons/hicolor/scalable/apps/vortex-steamos.svg"
+# The entry names the icon by its path. Steam copies that field into its
+# own shortcut and cannot look an icon up by name.
+sed -e "s|@APP@|$app|g" -e "s|@ICON@|$app/steam/icon.png|g" "$src/vortex-steamos.desktop.in" >"$entry"
 chmod 644 "$entry"
 ln -sf "$app/vortex-steamos" "$HOME/.local/bin/vortex-steamos"
 
@@ -76,5 +81,9 @@ if [ "$add_to_steam" -eq 1 ]; then
         fi
     else
         echo "To launch it from Game Mode or Big Picture: in Steam, use Games > Add a Non-Steam Game and pick Vortex for SteamOS."
+    fi
+    # Cover art and icon for the tile. Without them it is a grey box.
+    if command -v python3 >/dev/null 2>&1; then
+        python3 "$app/steam-artwork.py" "$app/vortex-steamos" "$app/steam" || true
     fi
 fi

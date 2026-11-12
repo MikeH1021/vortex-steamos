@@ -12,6 +12,12 @@
     },
     "nexus_domain": "skyrimspecialedition",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "asterisk",
       "app_dir": "Skyrim Special Edition",
@@ -45,7 +51,8 @@
     "extender": {
       "name": "SKSE64",
       "loader": "skse64_loader.exe"
-    }
+    },
+    "notes": "SKSE64 installs like any mod: download it from Nexus Mods and this app puts its loader next to the game. Steam still starts the game's own launcher. To start the game through SKSE64, set the game's launch options in Steam to: bash -c 'exec \"${@/SkyrimSELauncher.exe/skse64_loader.exe}\"' -- %command%"
   },
   {
     "id": "skyrim",
@@ -60,6 +67,12 @@
     },
     "nexus_domain": "skyrim",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "original",
       "app_dir": "Skyrim",
@@ -76,7 +89,8 @@
     "extender": {
       "name": "SKSE",
       "loader": "skse_loader.exe"
-    }
+    },
+    "notes": "SKSE installs like any mod: download it from Nexus Mods and this app puts its loader next to the game. Steam still starts the game's own launcher. To start the game through SKSE, set the game's launch options in Steam to: bash -c 'exec \"${@/SkyrimLauncher.exe/skse_loader.exe}\"' -- %command%"
   },
   {
     "id": "skyrimvr",
@@ -91,6 +105,12 @@
     },
     "nexus_domain": "skyrimspecialedition",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "asterisk",
       "app_dir": "Skyrim VR",
@@ -126,6 +146,12 @@
     },
     "nexus_domain": "enderal",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "original",
       "app_dir": "Enderal",
@@ -156,6 +182,12 @@
     },
     "nexus_domain": "starfield",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "asterisk",
       "app_dir": "Starfield",
@@ -202,6 +234,12 @@
     },
     "nexus_domain": "fallout4",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "asterisk",
       "app_dir": "Fallout4",
@@ -240,6 +278,12 @@
     },
     "nexus_domain": "fallout4",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "asterisk",
       "app_dir": "Fallout4VR",
@@ -271,6 +315,12 @@
     },
     "nexus_domain": "newvegas",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "original",
       "app_dir": "FalloutNV",
@@ -302,6 +352,12 @@
     },
     "nexus_domain": "fallout3",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "original",
       "app_dir": "Fallout3",
@@ -332,6 +388,12 @@
     },
     "nexus_domain": "oblivion",
     "kind": "bethesda",
+    "targets": {
+      "root": {
+        "base": "game",
+        "path": ""
+      }
+    },
     "plugins": {
       "format": "original",
       "app_dir": "Oblivion",
@@ -357,6 +419,9 @@
       499450
     ],
     "executable": "bin/x64/witcher3.exe",
+    "other_executables": [
+      "bin/x64_dx12/witcher3.exe"
+    ],
     "mod_path": {
       "base": "game",
       "path": ""

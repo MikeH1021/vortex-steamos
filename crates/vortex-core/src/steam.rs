@@ -385,7 +385,8 @@ fn find_game(
         deploy::resolve_case(&install_path, Path::new(relative)).filter(|path| path.is_file())
     };
     // A Windows build wins when both are there: that is what Proton runs.
-    let windows_exe = find(&game.executable);
+    let windows_exe = find(&game.executable)
+        .or_else(|| game.other_executables.iter().find_map(|path| find(path)));
     let native_exe = game.native_executable.as_deref().and_then(find);
     let native = windows_exe.is_none() && native_exe.is_some();
     let Some(exe_path) = windows_exe.or(native_exe) else {
@@ -425,7 +426,19 @@ fn find_game(
         .iter()
         .map(|(name, path)| (name.clone(), place(path)))
         .collect();
-    let staging_path = deploy::staging_dir(library, &game.id);
+    // Mods are staged in the library the game was in when the first one was
+    // installed. A game Steam has since moved to another library keeps its
+    // mods where they are, and they are linked across from there.
+    let own_staging = deploy::staging_dir(library, &game.id);
+    let staging_path = if own_staging.join("mods.json").is_file() {
+        own_staging
+    } else {
+        libraries
+            .iter()
+            .map(|other| deploy::staging_dir(other, &game.id))
+            .find(|other| other.join("mods.json").is_file())
+            .unwrap_or(own_staging)
+    };
     let in_prefix = game.mod_path.base != Base::Game
         || game.targets.values().any(|path| path.base != Base::Game);
     Ok(Some(InstalledGame {
