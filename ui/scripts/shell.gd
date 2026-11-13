@@ -488,7 +488,30 @@ func _sync(then_view := "", note := "") -> Dictionary:
 		_set_status("%s could not be installed. It is waiting in Downloads." % _failed[0].get("name", "An archive"), true)
 	elif not installed.is_empty():
 		_set_status("Installed %s." % _name_list(installed))
+	_tell_settings(result)
 	return result
+
+
+## Key bindings and the like that were just merged into the game's own
+## settings files for the mods that are on.
+func _tell_settings(result: Dictionary) -> void:
+	for report in result.get("settings", []):
+		var warning = report.get("warning")
+		if warning != null:
+			_set_status(str(warning), true)
+			return
+		var added := int(report.get("added", 0))
+		var removed := int(report.get("removed", 0))
+		if added == 0 and removed == 0:
+			continue
+		var text := ""
+		if added > 0:
+			text = "Added %d line%s to %s for %s." % [added, "" if added == 1 else "s", report.get("name", "the game's settings"), ", ".join(report.get("mods", []))]
+		else:
+			text = "Took %d line%s back out of %s." % [removed, "" if removed == 1 else "s", report.get("name", "the game's settings")]
+		var before := _status_label.text.strip_edges()
+		_set_status(text if before == "" else "%s  %s" % [before, text])
+		return
 
 
 func _take_state(result: Dictionary) -> bool:

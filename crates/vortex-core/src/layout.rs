@@ -302,6 +302,13 @@ fn witcher3(files: &[String]) -> Vec<Placement> {
             continue;
         }
         let folders = &lower[..lower.len() - 1];
+        // Key bindings to paste into input.settings. Kept with the mod, out
+        // of the game folder, wherever in the archive the author put them.
+        let inside_a_mod = folders.iter().any(|part| part == "mods" || part == "content");
+        if !inside_a_mod && crate::settings::is_snippet(&lower[lower.len() - 1], "input.settings") {
+            placements.push(place(file, "", format!(".settings/{}", parts[parts.len() - 1])));
+            continue;
+        }
         let anchor = |wanted: &str| folders.iter().position(|part| part == wanted);
         if let Some(index) = anchor("mods")
             .or_else(|| anchor("dlc"))
@@ -623,6 +630,11 @@ mod tests {
             ]
         );
         assert!(witcher3(&files(&["readme.txt", "mods/readme.txt"])).is_empty());
+        // A snippet beside the mod folders is kept, but not for the game folder.
+        assert_eq!(
+            moves(&witcher3(&files(&["Menu Mod/Menu.input.settings.txt"]))),
+            [pair("Menu Mod/Menu.input.settings.txt", ".settings/Menu.input.settings.txt")]
+        );
     }
 
     #[test]

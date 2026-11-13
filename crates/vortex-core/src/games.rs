@@ -206,6 +206,19 @@ pub struct GameDef {
     /// Something the player has to know or do that the app cannot do for them.
     #[serde(default)]
     pub notes: String,
+    /// Settings files of the game that mods bring lines for. A mod ships a
+    /// snippet named after the file, and its lines are merged in.
+    #[serde(default)]
+    pub settings: Vec<SettingsFile>,
+}
+
+/// One settings file mods add lines to, such as The Witcher 3's
+/// `input.settings` with its key bindings.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
+pub struct SettingsFile {
+    /// The file's name. `MyMod.input.settings` is a snippet for `input.settings`.
+    pub name: String,
+    pub path: ModPath,
 }
 
 fn yes() -> bool {

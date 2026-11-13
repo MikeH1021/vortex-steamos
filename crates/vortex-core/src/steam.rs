@@ -103,6 +103,8 @@ pub struct InstalledGame {
     pub needs_first_launch: bool,
     pub script_extender: Option<ScriptExtender>,
     pub notes: String,
+    /// Settings files mods add lines to, by name, where they are on disk.
+    pub settings: BTreeMap<String, PathBuf>,
     pub art: GameArt,
 }
 
@@ -426,6 +428,11 @@ fn find_game(
         .iter()
         .map(|(name, path)| (name.clone(), place(path)))
         .collect();
+    let settings: BTreeMap<String, PathBuf> = game
+        .settings
+        .iter()
+        .map(|file| (file.name.clone(), place(&file.path)))
+        .collect();
     // Mods are staged in the library the game was in when the first one was
     // installed. A game Steam has since moved to another library keeps its
     // mods where they are, and they are linked across from there.
@@ -458,6 +465,7 @@ fn find_game(
         link_method: deploy::link_method_for_paths(library, &install_path).ok(),
         needs_first_launch: in_prefix && !proton.prefix_exists,
         notes: game.notes.clone(),
+        settings,
         art: find_art(steam_root, app_id),
         merge_mods: game.merge_mods,
         proton,

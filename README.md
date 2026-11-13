@@ -21,7 +21,7 @@ Some games keep mods or their plugin list inside the Proton prefix, which Steam 
 
 ### The Witcher 3
 
-Mods, DLC folders, and menu files are recognised however the author packed them and placed under `mods`, `dlc`, and `bin` in the game folder. The game loads mods in alphabetical order of their folder names. Not handled: the Script Merger tool (needed when two mods change the same script), and mods that ask you to paste lines into `input.settings` or `user.settings`.
+Mods, DLC folders, and menu files are recognised however the author packed them and placed under `mods`, `dlc`, and `bin` in the game folder. The game loads mods in alphabetical order of their folder names. A mod that ships key bindings to paste into `input.settings` (a file such as `MyMod.input.settings`) has them added to the game's `input.settings` for you, and taken out again when the mod is turned off. The file as it was is kept next to it as `input.settings.vortex_backup`. Close the game first: it rewrites that file when it exits. Not handled: the Script Merger tool (needed when two mods change the same script), and mods that ask you to paste lines into `user.settings`.
 
 ### Cyberpunk 2077
 
@@ -185,6 +185,16 @@ Mod authors pack archives every which way, so a game can list rules for telling 
 - `flat`: install files with these endings side by side, dropping their folders.
 - `as_is`: install everything, optionally dropping one wrapper folder.
 - `reject`: refuse the archive with a message.
+
+A game can also name settings files of its own that mods bring lines for:
+
+```json
+"settings": [
+  { "name": "input.settings", "path": { "base": "documents", "path": "The Witcher 3/input.settings" } }
+]
+```
+
+A file in a mod called `input.settings`, or ending in `.input.settings` or `.input.settings.txt`, is then read as sections of lines, and each line is added to the same section of the game's file while the mod is on.
 
 Any rule can carry `to` (a folder inside the mod folder), `target` (one of the game's named `targets`, such as the game root for a mod loader), and `when` (`has_file`, `has_ext`, `has_dir`, `no_ext`).
 

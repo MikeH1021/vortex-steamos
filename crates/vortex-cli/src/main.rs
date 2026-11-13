@@ -15,7 +15,7 @@ use vortex_core::{
     preview_source, purge, read_lists, reconcile_plugins, remove_mod, search_mods,
     set_plugin_enabled, store_key, toggle_mod, validate_account, DeployReport, DownloadItem,
     FailedInstall, FixtureTransport, FomodChoice, GameDef, InstallRules, InstalledFiles,
-    InstalledGame, LiveTransport, ModEntry, NexusTransport, NxmLink, Plugin, PluginFiles,
+    merge_settings, InstalledGame, LiveTransport, ModEntry, NexusTransport, SettingsReport, NxmLink, Plugin, PluginFiles,
     PluginRules, SavedDownload,
 };
 
@@ -69,7 +69,9 @@ fn run() -> Result<(), String> {
         }
         Some("purge") => {
             let game = require_game(&args)?;
-            print_json(&purge(&game.staging_path, &game.deploy_roots()).map_err(text)?)
+            let report = purge(&game.staging_path, &game.deploy_roots()).map_err(text)?;
+            merge_game_settings(&game, &[])?;
+            print_json(&report)
         }
         Some("install") => {
             let game = require_game(&args)?;
@@ -143,6 +145,8 @@ struct SyncReport {
     plugins: Vec<Plugin>,
     plugin_warning: Option<String>,
     deploy: DeployReport,
+    /// Lines merged into the game's settings files for the enabled mods.
+    settings: Vec<SettingsReport>,
     installed: Vec<ModEntry>,
     pending: Vec<DownloadItem>,
     failed: Vec<FailedInstall>,
@@ -282,16 +286,60 @@ fn activate(game: &InstalledGame, take_incoming: bool) -> Result<SyncReport, Str
         },
     };
     let mods = load_mods(&game.staging_path).map_err(text)?;
+    let settings = merge_game_settings(game, &mods)?;
     Ok(SyncReport {
         game: game.clone(),
         mods,
         plugins,
         plugin_warning,
         deploy: deploy_report,
+        settings,
         installed,
         pending,
         failed,
         incoming: incoming_dir(&game.staging_path),
+    })
+}
+
+/// Key bindings and the like that the enabled mods ship for the game's own
+/// settings files. With no mods given, everything this app added comes out.
+fn merge_game_settings(
+    game: &InstalledGame,
+    mods: &[ModEntry],
+) -> Result<Vec<SettingsReport>, String> {
+    let mut reports = Vec::new();
+    if game.settings.is_empty() {
+        return Ok(reports);
+    }
+    let running = game_is_running(game);
+    for (name, path) in &game.settings {
+        reports
+            .push(merge_settings(&game.staging_path, mods, name, path, running).map_err(text)?);
+    }
+    Ok(reports)
+}
+
+/// Whether some process was started from the game's program. Under Proton
+/// the Windows path of the program is on the command line of the game.
+fn game_is_running(game: &InstalledGame) -> bool {
+    let Some(program) = game.exe_path.file_name().map(|name| name.to_string_lossy().to_lowercase())
+    else {
+        return false;
+    };
+    let Ok(entries) = std::fs::read_dir("/proc") else {
+        return false;
+    };
+    let own = std::process::id().to_string();
+    entries.flatten().any(|entry| {
+        let pid = entry.file_name().to_string_lossy().to_string();
+        if pid == own || !pid.bytes().all(|byte| byte.is_ascii_digit()) {
+            return false;
+        }
+        std::fs::read(entry.path().join("cmdline")).is_ok_and(|bytes| {
+            // The first argument is the program. Later ones may only mention it.
+            let first = bytes.split(|byte| *byte == 0).next().unwrap_or_default();
+            String::from_utf8_lossy(first).to_lowercase().replace('\\', "/").ends_with(&format!("/{program}"))
+        })
     })
 }
 

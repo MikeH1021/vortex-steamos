@@ -428,7 +428,16 @@
     },
     "nexus_domain": "witcher3",
     "kind": "witcher3",
-    "notes": "Mods load in alphabetical order of their folder names. Two mods that change the same script still need the Script Merger tool, which this app does not run."
+    "notes": "Mods load in alphabetical order of their folder names. Key bindings a mod ships for input.settings are added for you; close the game first, since it rewrites that file when it exits. Two mods that change the same script still need the Script Merger tool, which this app does not run.",
+    "settings": [
+      {
+        "name": "input.settings",
+        "path": {
+          "base": "documents",
+          "path": "The Witcher 3/input.settings"
+        }
+      }
+    ]
   },
   {
     "id": "cyberpunk2077",

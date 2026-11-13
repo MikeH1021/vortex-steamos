@@ -11,6 +11,7 @@ mod layout;
 mod nexus;
 mod plugins;
 mod proton;
+mod settings;
 mod steam;
 mod vdf;
 
@@ -42,6 +43,7 @@ pub use plugins::{
     LIST_HEADER,
 };
 pub use proton::{compat_tool_name, proton_layout, ProtonLayout};
+pub use settings::{merge_settings, SettingsReport};
 pub use steam::{
     default_steam_candidates, discover, discover_roots, steam_candidates, DiscoverReport,
     InstalledGame,
