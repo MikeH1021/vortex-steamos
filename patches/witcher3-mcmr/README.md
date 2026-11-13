@@ -28,7 +28,7 @@ In MCMR (`modMCME_Remastered`):
 - `local/MCME_RemasteredNPCHooks.ws`: each companion gets a timer of its own, `mcm_selfTick`. It runs `mcm_PlayerInit` if that has not happened, and stands in for the mod's quick and slow updates whenever they have stopped arriving.
 - `game/SpawnCompanionsSCMCC.ws`:
   - a refused follow behaviour (-1) is recorded as not started, and retried from the quick update;
-  - a follower on foot who stays more than 12 m behind for several seconds has her follow behaviour restarted, which covers a cutscene dropping it;
+  - a follower on foot who stays more than 12 m behind for several seconds has her follow behaviour restarted, which covers a cutscene dropping it. This is skipped while Geralt is on a horse, where she cannot keep up anyway and the catch-up teleport takes over;
   - a pause asked for through `StopFollowing(true)` is left alone, since the romance add-on uses that for idle poses and scenes and resumes on its own;
   - follower speed keeps pace with a running or sprinting Geralt, speeds up with distance, falls back to the direction Geralt faces when he has no velocity, and is capped at 4 like the mod's own horse code.
 - `game/SpawnCompanions.ws`: counters and timestamps for the quick and slow updates.
@@ -69,7 +69,16 @@ Checked in the running game, driven by scripted input, after a fresh load with n
 - companion banter plays;
 - the add-on starts a kiss scene by itself, speaks an afterglow line, raises affinity, and the companion follows again afterwards.
 
-Not checked: the 35 m catch-up teleport (she never fell that far behind), horses, boats, any companion other than Triss, and more than one companion at once.
+Checked in a second pass, with temporary test commands that are not part of the patch:
+
+- **Catch-up teleport on foot.** Triss was moved 40 m and 60 m away. Each time the mod teleported her back within one of its four-second checks (at 36.8 m and 54.1 m).
+- **Catch-up teleport while Geralt rides.** With Geralt at a canter and a gallop and Triss on foot, she ran at full speed, fell behind, and was teleported back at about 55 m, twice.
+
+Found not working, and not fixed here:
+
+- **Companion horse riding.** With Geralt mounted, the mod tries to put Triss on a horse and stops with `MCME horse: RiderData is unavailable for Triss` in the script log. The game has given her no rider data to pair with a horse. The same happened with a Triss removed and spawned again in that session, so it is not left over from an old save. Before these fixes the mod never got as far as trying. She follows on foot and teleports instead.
+
+Not checked: boats, any companion other than Triss, and more than one companion at once.
 
 ## Watching the script log
 

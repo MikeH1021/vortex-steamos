@@ -113,7 +113,7 @@ diff -ruN a/modMCME_Remastered/game/SpawnCompanionsSCMCC.ws b/modMCME_Remastered
  	var lastMoveSpeed : float; default lastMoveSpeed = 0;
  	
  	public function setMoveSpeed(speed : float)
-@@ -620,6 +624,25 @@
+@@ -620,6 +624,27 @@
  		}
  
  		UpdateHorseFollowStatus();
@@ -128,7 +128,9 @@ diff -ruN a/modMCME_Remastered/game/SpawnCompanionsSCMCC.ws b/modMCME_Remastered
 +			else farBehindTicks = 0;
 +			//A pause asked for by a scene or an idle pose is left alone: only a start
 +			//the game refused, or a follower that is plainly not keeping up, is retried.
-+			if((followingAICode == 0 && !suspendedOnPurpose) || (followingAICode != 0 && farBehindTicks > 12))
++			//On foot behind a mounted Geralt she cannot keep up whatever is restarted;
++			//the catch-up teleport deals with that.
++			if((followingAICode == 0 && !suspendedOnPurpose) || (followingAICode != 0 && farBehindTicks > 12 && !thePlayer.IsUsingHorse()))
 +			{
 +				farBehindTicks = 0;
 +				followRetryNext = theGame.GetEngineTimeAsSeconds() + 2.0;
@@ -139,7 +141,7 @@ diff -ruN a/modMCME_Remastered/game/SpawnCompanionsSCMCC.ws b/modMCME_Remastered
  		if(this.IsFollowing() && !pendingFootFollowAfterHorse && (followingAICode != 0 || horseFollowActive)) updateSpeed();
  		if(isCombatFriendlyWithPlayer) updateFriendlyCombat();
  	}
-@@ -914,6 +937,9 @@
+@@ -914,6 +939,9 @@
  			deltaPos = npc.GetWorldPosition() - thePlayer.GetWorldPosition();
  
  			playerVelocityVector = playerMovement.GetVelocity();
@@ -149,7 +151,7 @@ diff -ruN a/modMCME_Remastered/game/SpawnCompanionsSCMCC.ws b/modMCME_Remastered
  			
  			if(GetMCMEFollowAhead())
  			{
-@@ -939,6 +965,12 @@
+@@ -939,6 +967,12 @@
  				if(tmp < -10) tmp = -10;
  				
  				movespeed += tmp;
@@ -162,7 +164,7 @@ diff -ruN a/modMCME_Remastered/game/SpawnCompanionsSCMCC.ws b/modMCME_Remastered
  			}
  			else
  			{
-@@ -969,8 +1001,16 @@
+@@ -969,8 +1003,16 @@
  			if(movespeed < 0) movespeed = 0;
  		}
  		
@@ -179,7 +181,7 @@ diff -ruN a/modMCME_Remastered/game/SpawnCompanionsSCMCC.ws b/modMCME_Remastered
  	}
  	
  	//===============================================================================================================
-@@ -1232,6 +1272,7 @@
+@@ -1232,6 +1274,7 @@
  	public function onSpawned()
  	{
  		initCommon();
@@ -187,7 +189,7 @@ diff -ruN a/modMCME_Remastered/game/SpawnCompanionsSCMCC.ws b/modMCME_Remastered
  	}
  	
  	public function PostSpawnedInit()
-@@ -1724,6 +1765,7 @@
+@@ -1724,6 +1767,7 @@
  
  	public function StopFollowing(optional dontModifyPlayersList : bool)
  	{
@@ -195,7 +197,7 @@ diff -ruN a/modMCME_Remastered/game/SpawnCompanionsSCMCC.ws b/modMCME_Remastered
  		StopHorseMovement();
  		if(followingAICode != 0)
  		{
-@@ -1761,6 +1803,7 @@
+@@ -1761,6 +1805,7 @@
  
  	public function StartFollowing(optional dontModifyPlayersList : bool)
  	{
@@ -203,7 +205,7 @@ diff -ruN a/modMCME_Remastered/game/SpawnCompanionsSCMCC.ws b/modMCME_Remastered
  		// Daily-schedule actions must not compete with a recruited follower.
  		MCM_GetMCM().JobManager.cancelWorker(npc);
  		if(appearanceMenuOpen || pendingFootFollowAfterHorse || (npc.GetCurrentStateName() == 'SCMMountHorse' && !IsOnHorse))
-@@ -1781,6 +1824,7 @@
+@@ -1781,6 +1826,7 @@
  			StopFollowing(true);
  		}
  	
@@ -211,7 +213,7 @@ diff -ruN a/modMCME_Remastered/game/SpawnCompanionsSCMCC.ws b/modMCME_Remastered
  		if(followingAICode == 0)
  		{
  			if(IsOnHorse)
-@@ -1790,6 +1834,9 @@
+@@ -1790,6 +1836,9 @@
  			else
  			{
  				followingAICode = npc.ForceAIBehavior(followOnFootAI, BTAP_Emergency);
@@ -221,7 +223,7 @@ diff -ruN a/modMCME_Remastered/game/SpawnCompanionsSCMCC.ws b/modMCME_Remastered
  			}
  				
  			if (followingAICode || horseFollowActive) updateSpeed();
-@@ -1805,6 +1852,19 @@
+@@ -1805,6 +1854,19 @@
  	{
  		return this.isFollowing;
  	}
