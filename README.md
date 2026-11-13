@@ -23,6 +23,8 @@ Some games keep mods or their plugin list inside the Proton prefix, which Steam 
 
 Mods, DLC folders, and menu files are recognised however the author packed them and placed under `mods`, `dlc`, and `bin` in the game folder. The game loads mods in alphabetical order of their folder names. A mod that ships key bindings to paste into `input.settings` (a file such as `MyMod.input.settings`) has them added to the game's `input.settings` for you, and taken out again when the mod is turned off. The file as it was is kept next to it as `input.settings.vortex_backup`. Close the game first: it rewrites that file when it exits. Not handled: the Script Merger tool (needed when two mods change the same script), and mods that ask you to paste lines into `user.settings`.
 
+`patches/witcher3-mcmr/` holds script fixes for two specific mods, Multi Companion Mod Remastered and its Autonomous Romance add-on, whose companions would not run, catch up, or speak on the machine this was tested on. They are not applied by the app. Its README says what they do and how to apply them.
+
 ### Cyberpunk 2077
 
 Mods are placed from the level of the game's own folders (`archive`, `bin`, `r6`, `red4ext`, `engine`, `mods`). Loose `.archive` files go to `archive/pc/mod`, and REDmods to `mods`. Two things Steam has to be told:

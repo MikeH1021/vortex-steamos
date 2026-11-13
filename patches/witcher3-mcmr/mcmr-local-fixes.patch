@@ -1,0 +1,370 @@
+diff -ruN a/modMCME_AutonomousRomance/local/romance/MCM_RomanceQoL.ws b/modMCME_AutonomousRomance/local/romance/MCM_RomanceQoL.ws
+--- a/modMCME_AutonomousRomance/local/romance/MCM_RomanceQoL.ws
++++ b/modMCME_AutonomousRomance/local/romance/MCM_RomanceQoL.ws
+@@ -59,6 +59,8 @@
+ {
+ 	var factVal : int;
+ 	wrappedMethod();
++	//local patch: the add-on is normally started from the player's own spawn
++	//code. When that never ran, start it here, when a companion appears.
+ 
+ 	if (this.data && IsNameValid(this.data.nam))
+ 	{
+@@ -314,3 +316,29 @@
+ 	core.GotoState('ProcessingTick');
+ 	thePlayer.DisplayHudMessage("[AR] " + displayName + " comes over for a drink (" + NameToString(best) + ").");
+ }
++
++// local patch: the add-on is normally started from the player's own spawn
++// code (the InitRemasterSettings wrapper). On some setups that never runs when
++// a save loads, and nothing here ever happens. A companion's regular update
++// starts it when it has not been started yet.
++@addField(CR4Player)
++public var mcm_ar_lateStartDone : bool;
++
++@addMethod(CR4Player)
++public function MCM_AR_LateStart()
++{
++	if (mcm_ar_lateStartDone) return;
++	mcm_ar_lateStartDone = true;
++	if (!mcm_ar_ambient)
++	{
++		LogChannel('MCM_AR', "local patch: add-on had not been started, starting it from a companion update");
++		MCM_AR_OnPlayerReady();
++	}
++}
++
++@wrapMethod(SCMCompanionControls)
++function update4Second()
++{
++	wrappedMethod();
++	if (thePlayer) thePlayer.MCM_AR_LateStart();
++}
+diff -ruN a/modMCME_Remastered/game/mcm/MultiCompanionModExecutable.ws b/modMCME_Remastered/game/mcm/MultiCompanionModExecutable.ws
+--- a/modMCME_Remastered/game/mcm/MultiCompanionModExecutable.ws
++++ b/modMCME_Remastered/game/mcm/MultiCompanionModExecutable.ws
+@@ -444,3 +444,55 @@
+ 		}
+ 	}
+ }
++
++// local patch: "mcmdiag" in the console shows whether the mod's periodic
++// updates are running and what each follower is doing. "mcmfix" restarts
++// the timers and the follow behaviour.
++exec function mcmdiag()
++{
++	var scm : mod_scm;
++	var npcs : array<CNewNPC>;
++	var i : int;
++	var text : string;
++
++	scm = MCM_GetMCM();
++	if(!scm)
++	{
++		theGame.GetGuiManager().ShowNotification("MCM diag: no manager object", 20000.0);
++		return;
++	}
++	text = "MCM diag: quick ticks " + scm.quickTickCount + ", slow ticks " + scm.slowTickCount + ", stand-in ticks " + scm.fallbackTickCount
++		+ ", last quick " + FloatToStringPrec(theGame.GetEngineTimeAsSeconds() - scm.lastQuickTick, 1) + "s ago"
++		+ ", player state " + NameToString(thePlayer.GetCurrentStateName())
++		+ ", player speed " + FloatToStringPrec(thePlayer.GetMovingAgentComponent().GetSpeed(), 2)
++		+ " rel " + FloatToStringPrec(thePlayer.GetMovingAgentComponent().GetRelativeMoveSpeed(), 2);
++	theGame.GetNPCsByTag('GeraltsBFF', npcs);
++	for(i = 0; i < npcs.Size(); i += 1)
++	{
++		if(npcs[i].scmcc) text += "<br>" + npcs[i].scmcc.DiagLine();
++	}
++	LogChannel('ModSpawnCompanions', text);
++	theGame.GetGuiManager().ShowNotification(text, 30000.0);
++}
++
++exec function mcmfix()
++{
++	var npcs : array<CNewNPC>;
++	var i : int;
++
++	thePlayer.AddTimer('mod_scm_1second', 1, true, , , , true);
++	thePlayer.AddTimer('mod_scm_4second', 4, true, , , , true);
++	thePlayer.AddTimer('mod_scm_250msecond', 0.25, true, , , , true);
++	theGame.GetNPCsByTag('GeraltsBFF', npcs);
++	for(i = 0; i < npcs.Size(); i += 1)
++	{
++		if(npcs[i].scmcc && npcs[i].scmcc.IsFollowing()) npcs[i].scmcc.StartFollowing(true);
++	}
++	theGame.GetGuiManager().ShowNotification("MCM: timers and following restarted for " + npcs.Size() + " companions", 8000.0);
++}
++
++exec function mcmspeed()
++{
++	if(FactsQuerySum('mcm_local_speed_debug') > 0) FactsSet('mcm_local_speed_debug', 0);
++	else FactsSet('mcm_local_speed_debug', 1);
++}
+diff -ruN a/modMCME_Remastered/game/SpawnCompanionsSCMCC.ws b/modMCME_Remastered/game/SpawnCompanionsSCMCC.ws
+--- a/modMCME_Remastered/game/SpawnCompanionsSCMCC.ws
++++ b/modMCME_Remastered/game/SpawnCompanionsSCMCC.ws
+@@ -486,6 +486,10 @@
+ 	//===============================================================================================================
+ 	
+ 	var currentMoveSpeed : float; default currentMoveSpeed = 0;
++	var speedDebugNext : float; default speedDebugNext = 0; //local patch: debug readout throttle
++	var followRetryNext : float; default followRetryNext = 0; //local patch
++	var farBehindTicks : int; default farBehindTicks = 0; //local patch
++	var suspendedOnPurpose : bool; default suspendedOnPurpose = false; //local patch: following paused by a scene or an idle pose, not lost
+ 	var lastMoveSpeed : float; default lastMoveSpeed = 0;
+ 	
+ 	public function setMoveSpeed(speed : float)
+@@ -620,6 +624,25 @@
+ 		}
+ 
+ 		UpdateHorseFollowStatus();
++		//local patch: a follower on foot whose follow behaviour never started, or who
++		//has been left far behind for several seconds (a cutscene drops the behaviour
++		//without telling the mod), gets it started again.
++		if(this.IsFollowing() && !pendingFootFollowAfterHorse && !IsOnHorse && !horseFollowActive && !IsOnBoat
++			&& npc.GetCurrentStateName() == 'NewIdle' && !npc.IsInCombat() && !theGame.IsDialogOrCutscenePlaying()
++			&& theGame.GetEngineTimeAsSeconds() > followRetryNext)
++		{
++			if(VecDistanceSquared(thePlayer.GetWorldPosition(), npc.GetWorldPosition()) > 144.0) farBehindTicks += 1;
++			else farBehindTicks = 0;
++			//A pause asked for by a scene or an idle pose is left alone: only a start
++			//the game refused, or a follower that is plainly not keeping up, is retried.
++			if((followingAICode == 0 && !suspendedOnPurpose) || (followingAICode != 0 && farBehindTicks > 12))
++			{
++				farBehindTicks = 0;
++				followRetryNext = theGame.GetEngineTimeAsSeconds() + 2.0;
++				StartFollowing(true);
++				LogSCM("local patch: restarted following, code " + followingAICode);
++			}
++		}
+ 		if(this.IsFollowing() && !pendingFootFollowAfterHorse && (followingAICode != 0 || horseFollowActive)) updateSpeed();
+ 		if(isCombatFriendlyWithPlayer) updateFriendlyCombat();
+ 	}
+@@ -914,6 +937,9 @@
+ 			deltaPos = npc.GetWorldPosition() - thePlayer.GetWorldPosition();
+ 
+ 			playerVelocityVector = playerMovement.GetVelocity();
++			//local patch: with no usable velocity the "in front" maths below reads as
++			//"already ahead" and slows the follower to a walk. Use where Geralt faces.
++			if(VecLengthSquared(playerVelocityVector) < 0.01) playerVelocityVector = thePlayer.GetHeadingVector();
+ 			
+ 			if(GetMCMEFollowAhead())
+ 			{
+@@ -939,6 +965,12 @@
+ 				if(tmp < -10) tmp = -10;
+ 				
+ 				movespeed += tmp;
++				//local patch: keep pace. Running or sprinting Geralt gets a running or
++				//sprinting follower, and one who has dropped back speeds up to close the gap.
++				if(thePlayer.GetIsSprinting()) movespeed = MaxF(movespeed, 3.0);
++				else if(thePlayer.GetIsRunning()) movespeed = MaxF(movespeed, 2.0);
++				if(distance > 16.0) movespeed = MaxF(movespeed, MinF(1.5 + (SqrtF(distance) - 4.0) * 0.5, 4.0));
++				if(distanceInfront > 3.0 && distance < 16.0) movespeed = MinF(movespeed, 1.0);
+ 			}
+ 			else
+ 			{
+@@ -969,8 +1001,16 @@
+ 			if(movespeed < 0) movespeed = 0;
+ 		}
+ 		
++		movespeed = ClampF(movespeed, 0.0, 4.0); //local patch: same ceiling the mod uses on horseback
+ 		lastMoveSpeed = movespeed;
+ 		setMoveSpeed(((lastMoveSpeed + movespeed)/2.0) / this.data.scale);
++		//local patch: the console command mcmspeed switches a readout of what the
++		//follower's speed is being worked out from on and off.
++		if(FactsQuerySum('mcm_local_speed_debug') > 0 && theGame.GetEngineTimeAsSeconds() > speedDebugNext)
++		{
++			speedDebugNext = theGame.GetEngineTimeAsSeconds() + 3.0;
++			thePlayer.DisplayHudMessage("MCM speed: player " + FloatToStringPrec(playerSpeed, 2) + " rel " + FloatToStringPrec(playerMovement.GetRelativeMoveSpeed(), 2) + " follower " + FloatToStringPrec(movespeed, 2) + " dist " + FloatToStringPrec(SqrtF(distance), 1) + " infront " + FloatToStringPrec(distanceInfront, 1));
++		}
+ 	}
+ 	
+ 	//===============================================================================================================
+@@ -1232,6 +1272,7 @@
+ 	public function onSpawned()
+ 	{
+ 		initCommon();
++		npc.AddTimer('mcm_selfTick', 0.25, true, , , , true); //local patch
+ 	}
+ 	
+ 	public function PostSpawnedInit()
+@@ -1724,6 +1765,7 @@
+ 
+ 	public function StopFollowing(optional dontModifyPlayersList : bool)
+ 	{
++		suspendedOnPurpose = true; //local patch: whoever stopped it starts it again
+ 		StopHorseMovement();
+ 		if(followingAICode != 0)
+ 		{
+@@ -1761,6 +1803,7 @@
+ 
+ 	public function StartFollowing(optional dontModifyPlayersList : bool)
+ 	{
++		npc.AddTimer('mcm_selfTick', 0.25, true, , , , true); //local patch: stand-in tick, see MCME_RemasteredNPCHooks.ws
+ 		// Daily-schedule actions must not compete with a recruited follower.
+ 		MCM_GetMCM().JobManager.cancelWorker(npc);
+ 		if(appearanceMenuOpen || pendingFootFollowAfterHorse || (npc.GetCurrentStateName() == 'SCMMountHorse' && !IsOnHorse))
+@@ -1781,6 +1824,7 @@
+ 			StopFollowing(true);
+ 		}
+ 	
++		suspendedOnPurpose = false; //local patch
+ 		if(followingAICode == 0)
+ 		{
+ 			if(IsOnHorse)
+@@ -1790,6 +1834,9 @@
+ 			else
+ 			{
+ 				followingAICode = npc.ForceAIBehavior(followOnFootAI, BTAP_Emergency);
++				//local patch: -1 means the game refused the behaviour (it does while a
++				//save is still loading). Record that as "not started" so it is tried again.
++				if(followingAICode < 0) followingAICode = 0;
+ 			}
+ 				
+ 			if (followingAICode || horseFollowActive) updateSpeed();
+@@ -1805,6 +1852,19 @@
+ 	{
+ 		return this.isFollowing;
+ 	}
++
++	//local patch: one line on why this follower moves the way it does
++	public function DiagLine() : string
++	{
++		return NameToString(data.nam) + ": state " + NameToString(npc.GetCurrentStateName())
++			+ " follow " + isFollowing + " tag " + npc.HasTag('mod_scm_IsFollowing')
++			+ " aiCode " + followingAICode
++			+ " spd " + FloatToStringPrec(currentMoveSpeed, 2)
++			+ " dist " + FloatToStringPrec(SqrtF(VecDistanceSquared(thePlayer.GetWorldPosition(), npc.GetWorldPosition())), 1)
++			+ " interior " + npc.IsInInterior() + " combat " + npc.IsInCombat()
++			+ " horse " + IsOnHorse + " pendFoot " + pendingFootFollowAfterHorse
++			+ " apprMenu " + appearanceMenuOpen + " noSpd " + PlayerDisablesSpeed + " autoTp " + autoTpToPlayer;
++	}
+ 	
+ 	//===============================================================================================================
+ 	//        TALKING
+diff -ruN a/modMCME_Remastered/game/SpawnCompanions.ws b/modMCME_Remastered/game/SpawnCompanions.ws
+--- a/modMCME_Remastered/game/SpawnCompanions.ws
++++ b/modMCME_Remastered/game/SpawnCompanions.ws
+@@ -167,6 +167,13 @@
+ {
+ 	default autoState = 'Idle';
+ 
++	//local patch: heartbeat of the periodic updates, so a stalled timer can be seen and stood in for
++	public var lastQuickTick : float; default lastQuickTick = 0;
++	public var lastSlowTick : float; default lastSlowTick = 0;
++	public var quickTickCount : int; default quickTickCount = 0;
++	public var slowTickCount : int; default slowTickCount = 0;
++	public var fallbackTickCount : int; default fallbackTickCount = 0;
++
+ 	public var nameMapper : mod_scm_NameMapper;
+ 
+ 	//public var specialNPCInfos : mod_scm_SpecialNPCInfos;
+@@ -313,6 +320,8 @@
+ 		var PlayerDisablesSpeed : bool;
+ 		var time : int;
+ 		
++		lastQuickTick = theGame.GetEngineTimeAsSeconds(); //local patch
++		quickTickCount += 1;
+ 		PlayerDisablesSpeed = (thePlayer.IsSwimming() || thePlayer.IsDiving() || thePlayer.IsSailing() || thePlayer.IsOnBoat() || thePlayer.GetCurrentStateName() == 'PlayerDialogScene');
+ 		
+ 		theGame.GetNPCsByTag('GeraltsBFF', npcs);
+@@ -466,6 +475,8 @@
+ 		var npcs : array<CNewNPC>;
+ 		var i, sz : int;
+ 		
++		lastSlowTick = theGame.GetEngineTimeAsSeconds(); //local patch
++		slowTickCount += 1;
+ 		NPCManager.update();
+ 		
+ 		if(specialCoolDown > 0) specialCoolDown-=1;
+diff -ruN a/modMCME_Remastered/local/MCME_RemasteredNPCHooks.ws b/modMCME_Remastered/local/MCME_RemasteredNPCHooks.ws
+--- a/modMCME_Remastered/local/MCME_RemasteredNPCHooks.ws
++++ b/modMCME_Remastered/local/MCME_RemasteredNPCHooks.ws
+@@ -230,3 +230,32 @@
+     nativeStatus = wrappedMethod();
+     return nativeStatus;
+ }
++
++// local patch: the mod's periodic updates (follower speed, catch-up teleport,
++// banter) hang off timers on the player. When those have stopped arriving,
++// a companion's own timer stands in for them.
++@addMethod(CNewNPC)
++timer function mcm_selfTick(dt : float, id : int)
++{
++    var scm : mod_scm;
++    var now : float;
++
++    if(!scmcc) return;
++    if(thePlayer && !thePlayer.mcmPlayerInitDone)
++    {
++        LogChannel('ModSpawnCompanions', "local patch: player start-up had not run, running it from a companion");
++        thePlayer.mcm_PlayerInit();
++    }
++    scm = MCM_GetMCM();
++    if(!scm) return;
++    now = theGame.GetEngineTimeAsSeconds();
++    if(now - scm.lastQuickTick > 0.6)
++    {
++        scm.fallbackTickCount += 1;
++        scm.timer250msecond();
++    }
++    if(now - scm.lastSlowTick > 6.0)
++    {
++        scm.timer4second();
++    }
++}
+diff -ruN a/modMCME_Remastered/local/MCME_RemasteredPlayerHooks.ws b/modMCME_Remastered/local/MCME_RemasteredPlayerHooks.ws
+--- a/modMCME_Remastered/local/MCME_RemasteredPlayerHooks.ws
++++ b/modMCME_Remastered/local/MCME_RemasteredPlayerHooks.ws
+@@ -86,10 +86,28 @@
+     get_mod_scm().timer250msecond();
+ }
+ 
++// local patch: the start-up below used to live only in the OnSpawned wrapper.
++// On some setups that wrapper is never run when a save loads, which left the
++// mod with no periodic updates at all. It is now a method of its own, so a
++// companion can run it too (see mcm_selfTick in MCME_RemasteredNPCHooks.ws).
++@addField(CR4Player)
++public var mcmPlayerInitDone : bool;
++
+ @wrapMethod(CR4Player)
+ function OnSpawned(spawnData : SEntitySpawnData)
+ {
+     wrappedMethod(spawnData);
++    mcm_PlayerInit();
++}
++
++@addMethod(CR4Player)
++public function mcm_PlayerInit()
++{
++    var presentNpcs : array<CNewNPC>;
++    var p : int;
++
++    if(mcmPlayerInitDone) return;
++    mcmPlayerInitDone = true;
+ 
+     if(!MODSCM_COMPANIONS)
+     {
+@@ -122,6 +140,23 @@
+ 
+     LogChannel('ModSpawnCompanions', "Found Player: " + thePlayer + " when spawning " + this + ". Obj Equals: " + (thePlayer==this));
+ 
++    // local patch: the world-loaded pass removes every companion that is not on
++    // the saved follower list. When this start-up never ran in earlier sessions
++    // that list was never written, so companions who are following right now
++    // are put on it first.
++    if(MODSCM_COMPANIONS)
++    {
++        theGame.GetNPCsByTag('GeraltsBFF', presentNpcs);
++        for(p = 0; p < presentNpcs.Size(); p += 1)
++        {
++            if(presentNpcs[p].scmcc && presentNpcs[p].scmcc.IsFollowing())
++            {
++                MODSCM_COMPANIONS.AddCompanion(presentNpcs[p].scmcc.data);
++                LogChannel('ModSpawnCompanions', "local patch: kept follower on the saved list");
++            }
++        }
++    }
++
+     AddTimer('mod_scm_1second', 1, true);
+     AddTimer('mod_scm_4second', 4, true);
+     AddTimer('mod_scm_250msecond', 0.25, true);
